@@ -1,5 +1,6 @@
 link:
-	ln -sfnv $(shell pwd) $(HOME)/.config/hyprlock
+	mkdir -p $(HOME)/.config/hypr
+	ln -sfnv $(shell pwd)/hyprlock.conf $(HOME)/.config/hypr/hyprlock.conf
 
 packages:
 	sudo pacman -S --needed --noconfirm hyprlock

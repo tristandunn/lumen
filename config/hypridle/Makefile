@@ -1,5 +1,6 @@
 link:
-	ln -sfnv $(shell pwd) $(HOME)/.config/hypridle
+	mkdir -p $(HOME)/.config/hypr
+	ln -sfnv $(shell pwd)/hypridle.conf $(HOME)/.config/hypr/hypridle.conf
 
 packages:
 	sudo pacman -S --needed --noconfirm hypridle
