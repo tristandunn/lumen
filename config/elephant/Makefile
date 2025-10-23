@@ -1,5 +1,5 @@
 packages:
-	sudo pacman -S --needed --noconfirm elephant
+	yay -S --needed --noconfirm elephant
 
 install: packages
 
