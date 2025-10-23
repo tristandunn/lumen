@@ -1,2 +1,5 @@
 force_keyboard_focus = true
 selection_wrap = true
+
+[keybinds]
+quick_activate = []
