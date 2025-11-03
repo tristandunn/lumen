@@ -124,12 +124,12 @@ exit
 Install the minimal base system with essential packages, which includes:
 
 - `amd-ucode` - AMD processor microcode updates.
-- `base-devel` - Development tools.
 - `base` - Minimal package set to define a basic installation.
+- `base-devel` - Development tools.
 - `git` - Version control system needed for install scripts.
 - `less` - Terminal pager for viewing file contents.
-- `linux-firmware` - Firmware files for hardware devices.
 - `linux` - The Linux kernel.
+- `linux-firmware` - Firmware files for hardware devices.
 - `networkmanager` - Network connection manager.
 - `vim` - Text editor for configuration.
 - `zsh` - Z shell for a custom shell.
