@@ -97,15 +97,6 @@ mount -o noatime /dev/nvme0n1p2 /mnt
 mount --mkdir /dev/nvme0n1p1 /mnt/boot
 ```
 
-Generate the file system table (`fstab`) configuration. The `-U` flag uses UUIDs
-instead of device names to make the configuration more robust across reboots.
-
-```sh
-genfstab -U /mnt >> /mnt/etc/fstab
-```
-
-You can `cat /mnt/etc/fstab` to verify the entries if you prefer.
-
 ## Connect to the Internet
 
 Internet connectivity is required to download and install base system packages.
@@ -146,6 +137,17 @@ Install the minimal base system with essential packages, which includes:
 ```sh
 pacstrap /mnt amd-ucode base base-devel git less linux linux-firmware networkmanager vim zsh
 ```
+
+## Generate the System Table
+
+Generate the file system table (`fstab`) configuration. The `-U` flag uses UUIDs
+instead of device names to make the configuration more robust across reboots.
+
+```sh
+genfstab -U /mnt >> /mnt/etc/fstab
+```
+
+You can `cat /mnt/etc/fstab` to verify the entries if you prefer.
 
 ## Switch to the System
 
