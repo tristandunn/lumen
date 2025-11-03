@@ -1,6 +1,6 @@
 install:
-	make -C config/elephant install
 	make -C config/hypr install
+	make -C config/elephant install
 	make -C config/hypridle install
 	make -C config/hyprlock install
 	make -C config/kitty install
