@@ -1,0 +1,90 @@
+# Unix
+alias c="clear"
+alias ls="ls -l"
+alias vim="nvim"
+
+# git
+alias g="git"
+alias gadd="git a"
+
+# Bundler
+alias be="bundle exec"
+alias br="rake_command"
+
+# Rails
+alias rc="rails_command console"
+alias rs="server_command"
+alias rake="rake_command"
+alias kamal="kamal_command"
+alias rspec="rspec_command"
+alias migrate="rake_command db:migrate"
+alias rubocop="rubocop_command"
+
+# Helpers
+kamal_command() {
+  if [ -f bin/kamal ]; then
+    if [ -f .env ]; then
+      eval $(cat .env) bin/kamal "$@"
+    else
+      bin/kamal "$@"
+    fi
+  else
+    echo "No bin/kamal script found."
+  fi
+}
+
+server_command() {
+  if [ -f bin/dev ]; then
+    bin/dev
+  elif [ -f Procfile.dev ]; then
+    foreman start -f Procfile.dev
+  elif [ -f Procfile ]; then
+    foreman start
+  else
+    rails_command server
+  fi
+}
+
+rails_command() {
+  if [ -f bin/rails ]; then
+    bin/rails "$@"
+  else
+    bundle exec rails "$@"
+  fi
+}
+
+rake_command() {
+  if [ -f bin/rake ]; then
+    bin/rake "$@"
+  else
+    bundle exec rake "$@"
+  fi
+}
+
+rspec_command() {
+  if [ -f bin/rspec ]; then
+    bin/rspec "$@"
+  else
+    bundle exec rspec "$@"
+  fi
+}
+
+rubocop_command() {
+  if [ -f bin/rubocop ]; then
+    bin/rubocop -P "$@"
+  elif [ -f Gemfile ]; then
+    bundle exec rubocop -P "$@"
+  fi
+}
+
+git() {
+  if [[ $1 == "d" || $1 == "dc" ]]; then
+    clear
+  fi
+
+  command git "$@"
+}
+
+wip() {
+  git commit --message "WIP: $*"
+}

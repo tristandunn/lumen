@@ -1,0 +1,15 @@
+# Disable sessions.
+export SHELL_SESSIONS_DISABLE=1
+
+# Use neovim as the visual editor.
+export VISUAL=nvim
+export EDITOR=$VISUAL
+
+# Disable less file.
+export LESSHISTFILE=-
+
+# Access to custom executables.
+export PATH="$HOME/.local/bin:$PATH"
+
+# Disable statistics from Selenium Manager.
+export SE_AVOID_STATS=true

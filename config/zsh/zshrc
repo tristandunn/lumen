@@ -1,0 +1,43 @@
+# Completion which only updates daily.
+autoload -Uz compinit
+
+# Automatically enter directories without `cd`.
+setopt auto_cd
+
+# Aliases.
+if [[ -f "$HOME/.aliases" ]]; then
+  source "$HOME/.aliases"
+fi
+
+# Use vi mode.
+bindkey -v
+
+# Use incremental search.
+bindkey ^R history-incremental-search-backward
+
+# Expand functions in the prompt.
+setopt prompt_subst
+
+# Ignore duplicate history entries.
+setopt histignoredups
+
+# Keep more history.
+export HISTSIZE=4096
+# Move history out of the home directory.
+export HISTFILE="/tmp/.zsh_history"
+
+# Fix CMD+S shortcut.
+stty -ixon
+
+# Automatically set the window title with a hook executed before each prompt.
+precmd() {
+  local name=$PWD
+
+  if [[ $name/ = $HOME/ ]]; then
+    name="~"
+  else
+    name=$(basename "$name")
+  fi
+
+  printf "\e]0;%s\a" "$name"
+}
