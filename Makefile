@@ -1,6 +1,5 @@
 install:
 	make -C config/yay install
-	make -C config/mise install
 	make -C config/keyd install
 	make -C config/hypr install
 	make -C config/elephant install
@@ -13,5 +12,6 @@ install:
 	make -C config/sddm install
 	make -C config/walker install
 	make -C config/zsh install
+	make -C config/mise install
 
 .PHONY: install
