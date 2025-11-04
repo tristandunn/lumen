@@ -2,7 +2,7 @@ link:
 	ln -sfnv $(shell pwd)/tool-versions $(HOME)/.tool-versions
 
 packages:
-	sudo pacman -S --needed --noconfirm mise
+	sudo pacman -S --needed --noconfirm libyaml mise
 
 setup:
 	mise install
