@@ -11,5 +11,11 @@ export LESSHISTFILE=-
 # Access to custom executables.
 export PATH="$HOME/.local/bin:$PATH"
 
+# Move the Go and Rust paths.
+export GOPATH="$HOME/.local/share/go"
+export CARGO_HOME="$HOME/.local/share/rust/cargo"
+export RUSTUP_HOME="$HOME/.local/share/rust/rustup"
+export PATH="$PATH:$CARGO_HOME/bin"
+
 # Disable statistics from Selenium Manager.
 export SE_AVOID_STATS=true
