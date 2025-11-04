@@ -38,3 +38,6 @@ precmd() {
 
   printf "\e]0;%s\a" "$name"
 }
+
+# Activate mise.
+eval "$(mise activate zsh)"
