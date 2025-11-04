@@ -1,0 +1,43 @@
+[alias]
+  a = !git add -A && git status
+  b = branch
+  c = commit --edit --message
+  ca = commit --amend
+  d = diff
+  dc = diff --cached
+  default-branch-name = !git remote show origin | awk '/HEAD branch/ {print $NF}'
+  pl = pull --autostash
+  ps = push
+  plre = pull --autostash --rebase
+  s = switch
+  sm = !git switch `git default-branch-name`
+  st = status
+  up = !git fetch origin && git rebase origin/`git default-branch-name`
+[color]
+  ui = auto
+[core]
+  attributesfile = ~/.config/git/attributes
+  pager = less -r
+[diff]
+  algorithm = histogram
+  mnemonicPrefix = true
+  renames = true
+  compactionHeuristic = true
+[fetch]
+  prune = true
+[init]
+  defaultBranch = main
+[merge]
+  ff = only
+[pull]
+  ff = only
+[push]
+  default = nothing
+[rerere]
+  enabled = true
+  autoUpdate = true
+[tag]
+  sort = version:refname
+[user]
+  name = Tristan Dunn
+  email = hello@tristandunn.com

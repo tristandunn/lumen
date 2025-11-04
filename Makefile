@@ -7,6 +7,7 @@ install:
 	make -C config/kitty install
 	make -C config/sddm install
 	make -C config/walker install
+	make -C config/git install
 	make -C config/zsh install
 
 .PHONY: install
