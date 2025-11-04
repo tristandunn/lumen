@@ -53,16 +53,9 @@ if [ -z "$TMUX" ]; then
     tmux new-window -d -n claude
     tmux new-window -d -n server
 
-    DIMENSIONS=$(osascript -e 'Tell application "Finder" to get bounds of window of desktop')
-
     # Split window for test and terminal panes.
-    if [ "$DIMENSIONS" == "0, 0, 1470, 956" ]; then
-      tmux split-window -t 1 -hl 60
-      tmux split-window -t 2 -vl 16
-    else
-      tmux split-window -t 1 -hl 102
-      tmux split-window -t 2 -vp 32
-    fi
+    tmux split-window -t 1 -hl 102
+    tmux split-window -t 2 -vp 32
 
     # Select the code pane.
     tmux select-pane -t 1
