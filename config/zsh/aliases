@@ -1,6 +1,6 @@
 # Unix
 alias c="clear"
-alias ls="ls -l"
+alias ls="ls -l --color=auto"
 alias vim="nvim"
 
 # git
