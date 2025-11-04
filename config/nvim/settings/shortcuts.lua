@@ -36,7 +36,7 @@ set("n", "<Leader>e", ":e +9 <C-R>=escape(expand(\"%:p:h\") . \"/\", \" \") <CR>
 -- Opens a tab edit command with the path of the currently edited file filled in.
 set("n", "<Leader>te", ":tabe +9 <C-R>=escape(expand(\"%:p:h\") . \"/\", \" \") <CR>")
 
--- Shortcuts for CMD+S forwarding support.
+-- Shortcuts for Super+S forwarding support.
 set("n", "<C-S>", "<Cmd>update<CR>")
 set("v", "<C-S>", "<C-C><Cmd>update<CR>")
 set("i", "<C-S>", "<C-O><Cmd>update<CR>")

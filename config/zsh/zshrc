@@ -26,9 +26,6 @@ export HISTSIZE=4096
 # Move history out of the home directory.
 export HISTFILE="/tmp/.zsh_history"
 
-# Fix CMD+S shortcut.
-stty -ixon
-
 # Automatically set the window title with a hook executed before each prompt.
 precmd() {
   local name=$PWD
