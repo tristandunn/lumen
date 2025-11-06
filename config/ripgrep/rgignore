@@ -1,0 +1,10 @@
+*.svg
+*min.js
+yarn.lock
+.git/
+.yarn/
+coverage/
+log/
+node_modules/
+tmp/
+vendor/
