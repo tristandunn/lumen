@@ -135,7 +135,8 @@ Install the minimal base system with essential packages, which includes:
 - `zsh` - Z shell for a custom shell.
 
 ```sh
-pacstrap /mnt amd-ucode base base-devel git less linux linux-firmware networkmanager vim zsh
+pacstrap /mnt amd-ucode base base-devel git less linux linux-firmware \
+  networkmanager vim zsh
 ```
 
 ## Generate the System Table
@@ -308,7 +309,7 @@ passwd username
 
 Grant `sudo` privileges to the wheel group by uncommenting a specific line.
 
-```
+```sh
 # Uncomment: %wheel ALL=(ALL:ALL) ALL
 EDITOR=vim visudo
 ```

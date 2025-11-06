@@ -4,7 +4,7 @@ My neovim configuration.
 
 ## LSP Servers
 
-```
+```sh
 # Install servers for Docker, Lua, Ruby, TailwindCSS, and JavaScript.
 yay -S --needed --noconfirm \
     dockerfile-language-server \
