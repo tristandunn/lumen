@@ -1,0 +1,237 @@
+#!/bin/bash
+
+set -euo pipefail
+
+readonly BLUE='\033[0;34m'
+readonly GREEN='\033[0;32m'
+readonly RED='\033[0;31m'
+readonly RESET='\033[0m'
+readonly YELLOW='\033[1;33m'
+
+show_usage() {
+  cat << EOF
+Usage: pkg [command] [options]
+
+A friendly wrapper around yay for Arch Linux package management.
+
+Commands:
+  outdated              List packages with available updates.
+  list                  List explicitly installed packages.
+  info <package>        Show package information.
+  install <package...>  Install one or more packages.
+  update                Update all packages.
+  remove <package...>   Remove packages and their dependencies.
+  cleanup               Clean package cache and orphaned dependencies.
+  help                  Show this help message.
+
+Examples:
+  pkg                   # Show outdated packages.
+  pkg outdated          # Same as above.
+  pkg list              # List explicitly installed packages.
+  pkg info neovim       # Show neovim package information.
+  pkg install neovim    # Install neovim.
+  pkg update            # Update all packages.
+  pkg remove firefox    # Remove firefox and its dependencies.
+  pkg cleanup           # Clean cache and orphaned packages.
+
+EOF
+}
+
+cmd_outdated() {
+  echo -e "${BLUE}→${RESET} Syncing package database..."
+  yay -Sy >/dev/null
+
+  local outdated_packages
+  outdated_packages=$(yay -Qu 2>/dev/null | sort) || true
+
+  if [[ -z "$outdated_packages" ]]; then
+    echo -e "${GREEN}✓${RESET} All packages are up to date."
+    return 0
+  fi
+
+  echo -e "${YELLOW}Outdated Packages:${RESET}"
+  echo
+
+  while IFS= read -r line; do
+    if [[ -z "$line" ]]; then
+      continue
+    fi
+
+    local name current_version latest_version
+
+    read -r name current_version _ latest_version <<< "$line"
+
+    printf "  %-30s ${BLUE}%-20s${RESET} → ${GREEN}%s${RESET}\n" "$name" "$current_version" "$latest_version"
+  done <<< "$outdated_packages"
+
+  echo
+  echo -e "${BLUE}Commands:${RESET}"
+  echo "  pkg update          # Update all packages."
+}
+
+cmd_list() {
+  local aur_packages=()
+  local official_packages=()
+  local -A aur_pkgs
+
+  # Build associative array of AUR/foreign packages.
+  while IFS= read -r line; do
+    if [[ -z "$line" ]]; then
+      continue
+    fi
+
+    local pkg _
+    read -r pkg _ <<< "$line"
+
+    aur_pkgs[$pkg]=1
+  done < <(yay -Qm 2>/dev/null)
+
+  # Read explicitly installed packages and categorize.
+  while IFS= read -r line; do
+    if [[ -z "$line" ]]; then
+      continue
+    fi
+
+    local pkg _
+    read -r pkg _ <<< "$line"
+
+    if [[ -v aur_pkgs[$pkg] ]]; then
+      aur_packages+=("$pkg")
+    else
+      official_packages+=("$pkg")
+    fi
+  done < <(yay -Qe 2>/dev/null | sort)
+
+  local total_count=$((${#official_packages[@]} + ${#aur_packages[@]}))
+
+  if [[ $total_count -eq 0 ]]; then
+    echo -e "${RED}✗${RESET} No explicitly installed packages found."
+    return 1
+  fi
+
+  if [[ ${#official_packages[@]} -gt 0 ]]; then
+    echo -e "${YELLOW}Official Repositories${RESET} (${#official_packages[@]})"
+    printf '  %s\n' "${official_packages[@]}" | pr -t -3 -a
+    echo
+  fi
+
+  if [[ ${#aur_packages[@]} -gt 0 ]]; then
+    echo -e "${YELLOW}AUR Packages${RESET} (${#aur_packages[@]})"
+    printf '  %s\n' "${aur_packages[@]}" | pr -t -3 -a
+  fi
+}
+
+cmd_info() {
+  if [[ $# -eq 0 ]]; then
+    echo -e "${RED}✗${RESET} Error: No package specified."
+    return 1
+  fi
+
+  yay -Si -- "$@" 2>/dev/null || yay -Qi -- "$@"
+}
+
+cmd_update() {
+  echo -e "${BLUE}→${RESET} Updating all packages..."
+  yay -Syu || return $?
+}
+
+cmd_install() {
+  if [[ $# -eq 0 ]]; then
+    echo -e "${RED}✗${RESET} Error: No package specified."
+    return 1
+  fi
+
+  echo -e "${BLUE}→${RESET} Syncing package database..."
+  yay -Sy >/dev/null
+
+  if yay -Qu &>/dev/null; then
+    echo -e "${RED}✗${RESET} Error: System upgrades are available. Run 'pkg update' first."
+    return 1
+  fi
+
+  echo -e "${BLUE}→${RESET} Installing packages: $*"
+  yay -S --needed -- "$@"
+}
+
+cmd_remove() {
+  if [[ $# -eq 0 ]]; then
+    echo -e "${RED}✗${RESET} Error: No package specified."
+    return 1
+  fi
+
+  echo -e "${YELLOW}→${RESET} Removing packages and dependencies: $*"
+  yay -Rns -- "$@"
+}
+
+cmd_cleanup() {
+  echo -e "${BLUE}→${RESET} Cleaning package cache..."
+  yay -Sc
+
+  echo
+  echo -e "${BLUE}→${RESET} Removing orphaned dependencies..."
+
+  if orphans=$(yay -Qdtq 2>/dev/null); then
+    if [[ -n "$orphans" ]]; then
+      echo "$orphans"
+      echo
+      read -p "Remove these orphaned packages? [y/N] " -n 1 -r
+      echo
+
+      if [[ $REPLY =~ ^[Yy]$ ]]; then
+        echo "$orphans" | xargs -r yay -Rns --
+        echo -e "${GREEN}✓${RESET} Orphaned packages removed."
+      else
+        echo "Skipped"
+      fi
+    else
+      echo -e "${GREEN}✓${RESET} No orphaned packages found."
+    fi
+  else
+    echo -e "${GREEN}✓${RESET} No orphaned packages found."
+  fi
+}
+
+main() {
+  if [[ $# -eq 0 ]]; then
+    cmd_outdated
+    return $?
+  fi
+
+  local command="$1"
+  shift
+
+  case "$command" in
+    outdated)
+      cmd_outdated "$@"
+      ;;
+    list)
+      cmd_list "$@"
+      ;;
+    info)
+      cmd_info "$@"
+      ;;
+    update)
+      cmd_update "$@"
+      ;;
+    install)
+      cmd_install "$@"
+      ;;
+    remove)
+      cmd_remove "$@"
+      ;;
+    cleanup)
+      cmd_cleanup "$@"
+      ;;
+    help)
+      show_usage
+      ;;
+    *)
+      echo -e "${RED}✗${RESET} Unknown command: $command"
+      echo
+      show_usage
+      return 1
+      ;;
+  esac
+}
+
+main "$@"
