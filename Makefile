@@ -3,6 +3,7 @@ install:
 	make -C config/keyd install
 	make -C config/hypr install
 	make -C config/elephant install
+	make -C config/firefox install
 	make -C config/git install
 	make -C config/hypridle install
 	make -C config/hyprlock install
