@@ -4,6 +4,7 @@ link:
 	ln -sfnv $(shell pwd)/zlogin $(HOME)/.zlogin
 	ln -sfnv $(shell pwd)/aliases $(HOME)/.aliases
 	mkdir -p $(HOME)/.local/bin
+	ln -sfnv $(shell pwd)/bin/hypr-dispatch $(HOME)/.local/bin/hypr-dispatch
 	ln -sfnv $(shell pwd)/bin/llm $(HOME)/.local/bin/llm
 	ln -sfnv $(shell pwd)/bin/t $(HOME)/.local/bin/t
 

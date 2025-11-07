@@ -1,0 +1,36 @@
+#!/bin/bash
+
+set -euo pipefail
+
+declare -A SHORTCUTS=(
+  [copy:default]="SHIFT+CONTROL,C"
+  [paste:default]="SHIFT+CONTROL,V"
+  [reload:firefox]="CONTROL,R"
+  [save:default]="CONTROL,S"
+  [tab-close:default]="killactive"
+  [tab-close:firefox]="CONTROL,W"
+  [tab-close:kitty]="SHIFT+CONTROL,W"
+  [tab-goto-number:firefox]="ALT"
+  [tab-new:firefox]="CONTROL,T"
+  [tab-new:kitty]="SHIFT+CONTROL,T"
+  [tab-next:firefox]="CONTROL,TAB"
+  [tab-next:kitty]="SHIFT+CONTROL,RIGHT"
+  [tab-previous:firefox]="SHIFT+CONTROL,TAB"
+  [tab-previous:kitty]="SHIFT+CONTROL,LEFT"
+)
+
+action=$1
+param=${2:-}
+class=$(hyprctl activewindow -j | jq -r '.class')
+address="0x$(hyprctl activewindow | head -n 1 | awk '{print $2}')"
+shortcut="${SHORTCUTS[$action:$class]:-${SHORTCUTS[$action:default]}}"
+
+if [[ -z "$shortcut" ]]; then
+  exit 1
+elif [[ "$shortcut" == "killactive" ]]; then
+  hyprctl dispatch killactive
+elif [[ -n "$param" ]]; then
+  hyprctl dispatch sendshortcut "$shortcut", "$param", address:"$address"
+else
+  hyprctl dispatch sendshortcut "$shortcut", address:"$address"
+fi
