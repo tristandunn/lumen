@@ -8,6 +8,9 @@ link:
 	ln -sfnv $(shell pwd)/bin/llm $(HOME)/.local/bin/llm
 	ln -sfnv $(shell pwd)/bin/t $(HOME)/.local/bin/t
 
-install: link
+packages:
+	sudo pacman -S --needed --noconfirm jq
 
-.PHONY: install link
+install: packages link
+
+.PHONY: install link packages
