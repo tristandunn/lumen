@@ -17,6 +17,7 @@ declare -A SHORTCUTS=(
   [tab-next:kitty]="SHIFT+CONTROL,RIGHT"
   [tab-previous:firefox]="SHIFT+CONTROL,TAB"
   [tab-previous:kitty]="SHIFT+CONTROL,LEFT"
+  [toggle-float:default]="toggle-float"
 )
 
 action=$1
@@ -29,6 +30,18 @@ if [[ -z "$shortcut" ]]; then
   exit 1
 elif [[ "$shortcut" == "killactive" ]]; then
   hyprctl dispatch killactive
+elif [[ "$shortcut" == "toggle-float" ]]; then
+  window_info=$(hyprctl activewindow -j)
+  floating=$(echo "$window_info" | jq -r '.floating')
+  workspace=$(echo "$window_info" | jq -r '.workspace.name')
+
+  hyprctl dispatch togglefloating
+  hyprctl dispatch movetoworkspace "$workspace"
+
+  if [[ "$floating" == "false" ]]; then
+    hyprctl dispatch resizeactive exact 80% 80%
+    hyprctl dispatch centerwindow
+  fi
 elif [[ -n "$param" ]]; then
   hyprctl dispatch sendshortcut "$shortcut", "$param", address:"$address"
 else
