@@ -31,7 +31,7 @@ return {
         "fallback"
       },
 
-      -- Modify the Shift+Tab shortcut to select the next item.
+      -- Modify the Shift+Tab shortcut to select the previous item.
       ["<S-Tab>"] = { "select_prev", "fallback" }
     },
 
