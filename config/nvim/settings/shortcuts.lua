@@ -85,12 +85,14 @@ usercmd(
     end
 
     -- Cancel the current command and clear the pane.
-    vim.fn.system("tmux send-keys -t " .. pane .. " C-c clear Enter")
+    vim.fn.system("tmux send-keys -t " .. pane .. " C-c")
+    vim.fn.system("tmux send-keys -t " .. pane .. " -l 'clear'")
+    vim.fn.system("tmux send-keys -t " .. pane .. " Enter")
 
     -- Wait for the pane to be cleared and execute the commands.
     vim.defer_fn(function()
       vim.fn.system(commands)
-    end, 5)
+    end, 25)
   end,
   { desc = "Run a command in a specific tmux pane.", nargs = "*" }
 )
