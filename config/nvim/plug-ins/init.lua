@@ -28,7 +28,7 @@ require("lazy").setup({
   -- Completion.
   {
     "saghen/blink.cmp",
-    version = "1.3.1",
+    version = "*",
     opts    = require("plug-ins.completion").options
   },
 
