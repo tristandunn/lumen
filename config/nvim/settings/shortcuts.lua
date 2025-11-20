@@ -7,7 +7,7 @@ local usercmd = vim.api.nvim_create_user_command
 global.mapleader = " "
 
 -- Copy selection to the clipboard.
-vim.keymap.set("v", "<Leader>c", "\"+y")
+set("v", "<Leader>c", "\"+y")
 
 -- Duplicate a selection.
 set("v", "D", "y'>p")
