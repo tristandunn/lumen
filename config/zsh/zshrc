@@ -30,9 +30,6 @@ bindkey -v
 # Use incremental search.
 bindkey ^R history-incremental-search-backward
 
-# Expand functions in the prompt.
-setopt prompt_subst
-
 # Ignore duplicate history entries.
 setopt histignoredups
 
