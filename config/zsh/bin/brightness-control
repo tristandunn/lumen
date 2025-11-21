@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if [[ "$1" == "raise" ]]; then
+  output=$(sudo asdcontrol --silent /dev/usb/hiddev4 -- "+5%")
+elif [[ "$1" == "lower" ]]; then
+  output=$(sudo asdcontrol --silent /dev/usb/hiddev4 -- "-5%")
+fi
+
+brightness=$(echo "$output" | grep -oP 'BRIGHTNESS=\K\d+')
+percentage=$(((brightness - 400) * 100 / 59600))
+progress=$(awk "BEGIN {printf \"%.2f\", $percentage / 100}")
+
+swayosd-client --custom-icon "display-brightness-symbolic" \
+  --custom-progress "$progress" \
+  --custom-progress-text "${percentage}%"
