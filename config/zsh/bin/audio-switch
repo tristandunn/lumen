@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Define the audio devices.
+HEADPHONES_NAME="Headphones"
+HEADPHONES_SINK="alsa_output.pci-0000_c2_00.6.analog-stereo"
+
+DISPLAY_NAME="Studio Display"
+DISPLAY_SINK="alsa_output.usb-Apple_Inc._Studio_Display_00008030-001C20A602D0C02E-02.analog-stereo"
+
+# Get current sink.
+current_sink=$(pactl get-default-sink)
+
+# Determine which device to switch to.
+if [[ "$current_sink" == "$HEADPHONES_SINK" ]]; then
+  new_sink="$DISPLAY_SINK"
+  new_name="$DISPLAY_NAME"
+else
+  new_sink="$HEADPHONES_SINK"
+  new_name="$HEADPHONES_NAME"
+fi
+
+# Switch the default sink.
+pactl set-default-sink "$new_sink"
+
+# Move all active audio streams to the new sink.
+pactl list short sink-inputs | awk '{print $1}' | while read -r stream_id; do
+  pactl move-sink-input "$stream_id" "$new_sink" 2>/dev/null || true
+done
+
+# Display HUD notification.
+swayosd-client --custom-icon "audio-headphones-symbolic" \
+  --custom-message "$new_name"
