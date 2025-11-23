@@ -1,3 +1,5 @@
+install: packages link service
+
 link:
 	sudo mkdir -p /etc/keyd
 	sudo ln -sfnv $(shell pwd)/default.conf /etc/keyd/default.conf
@@ -8,7 +10,5 @@ packages:
 
 service:
 	sudo systemctl enable --now keyd
-
-install: packages link service
 
 .PHONY: install link packages service

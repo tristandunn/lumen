@@ -1,3 +1,5 @@
+install: packages link
+
 link:
 	mkdir -p $(HOME)/.config/nvim/lua
 	ln -sfnv $(shell pwd)/.luarc.json $(HOME)/.config/nvim/.luarc.json
@@ -9,7 +11,5 @@ link:
 
 packages:
 	sudo pacman -S --needed --noconfirm neovim
-
-install: packages link
 
 .PHONY: install link packages

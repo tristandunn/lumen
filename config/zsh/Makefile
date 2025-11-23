@@ -1,3 +1,5 @@
+install: packages link
+
 link:
 	ln -sfnv $(shell pwd)/zshrc $(HOME)/.zshrc
 	ln -sfnv $(shell pwd)/zshenv $(HOME)/.zshenv
@@ -12,7 +14,5 @@ link:
 
 packages:
 	sudo pacman -S --needed --noconfirm jq
-
-install: packages link
 
 .PHONY: install link packages

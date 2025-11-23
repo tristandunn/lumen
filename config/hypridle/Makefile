@@ -1,5 +1,7 @@
-asdcontrol:
-	bash $(shell pwd)/install-asdcontrol.sh
+install: build packages link
+
+build:
+	./build.sh
 
 link:
 	mkdir -p $(HOME)/.config/hypr
@@ -8,6 +10,4 @@ link:
 packages:
 	sudo pacman -S --needed --noconfirm hypridle
 
-install: packages asdcontrol link
-
-.PHONY: install link packages asdcontrol
+.PHONY: build install link packages

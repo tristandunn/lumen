@@ -1,3 +1,5 @@
+install: packages link
+
 link:
 	mkdir -p $(HOME)/.config/hypr
 	ln -sfnv $(shell pwd)/appearance.conf $(HOME)/.config/hypr/appearance.conf
@@ -11,7 +13,5 @@ link:
 
 packages:
 	sudo pacman -S --needed --noconfirm hyprland xdg-desktop-portal-hyprland
-
-install: packages link
 
 .PHONY: install link packages
