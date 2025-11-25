@@ -2,9 +2,9 @@
 
 set -euo pipefail
 
-# Define the audio devices.
-HEADPHONES_NAME="Headphones"
-HEADPHONES_SINK="alsa_output.pci-0000_c2_00.6.analog-stereo"
+# Define and retrieve the audio devices.
+HEADPHONES_NAME="Bose QC Ultra"
+HEADPHONES_SINK=$(pactl list short sinks 2>/dev/null | grep -E 'bluez_output' | head -1 | awk '{print $2}' || true)
 
 DISPLAY_NAME="Studio Display"
 DISPLAY_SINK="alsa_output.usb-Apple_Inc._Studio_Display_00008030-001C20A602D0C02E-02.analog-stereo"
@@ -12,13 +12,13 @@ DISPLAY_SINK="alsa_output.usb-Apple_Inc._Studio_Display_00008030-001C20A602D0C02
 # Get current sink.
 current_sink=$(pactl get-default-sink)
 
-# Determine which device to switch to.
-if [[ "$current_sink" == "$HEADPHONES_SINK" ]]; then
-  new_sink="$DISPLAY_SINK"
-  new_name="$DISPLAY_NAME"
-else
+# Toggle between headphones and display.
+if [[ "$current_sink" == "$DISPLAY_SINK" ]] && [[ -n "$HEADPHONES_SINK" ]]; then
   new_sink="$HEADPHONES_SINK"
   new_name="$HEADPHONES_NAME"
+else
+  new_sink="$DISPLAY_SINK"
+  new_name="$DISPLAY_NAME"
 fi
 
 # Switch the default sink.
