@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+case "${1:-}" in
+  alsa)
+    pactl list short sinks 2>/dev/null | grep 'alsa_output\.usb' | head -1 | awk '{print $2}' || true
+    ;;
+  bluetooth)
+    pactl list short sinks 2>/dev/null | grep 'bluez_output' | head -1 | awk '{print $2}' || true
+    ;;
+  current)
+    pactl get-default-sink
+    ;;
+  description)
+    sink="${2:-$(pactl get-default-sink)}"
+    pactl list sinks 2>/dev/null | grep -A 15 "Name: $sink" | grep 'Description:' | sed 's/.*Description: //; s/ Analog Stereo//' || echo "$sink"
+    ;;
+  *)
+    echo "Usage: audio-sink <alsa|bluetooth|current|description> [sink]" >&2
+    exit 1
+    ;;
+esac

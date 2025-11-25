@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+devices=$(bluetoothctl devices Paired 2>/dev/null | awk '{print $2}' || true)
+
+for address in $devices; do
+  if bluetoothctl info "$address" 2>/dev/null | grep -q "Connected: yes"; then
+    bluetoothctl disconnect "$address" &>/dev/null || true
+    sleep 1
+    bluetoothctl connect "$address" &>/dev/null || true
+    sleep 2
+    exit 0
+  fi
+done
+
+exit 1

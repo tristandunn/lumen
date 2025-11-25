@@ -1,5 +1,6 @@
 install:
 	make -C config/yay install
+	make -C config/bluetooth install
 	make -C config/keyd install
 	make -C config/hypr install
 	make -C config/elephant install
