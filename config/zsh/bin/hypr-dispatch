@@ -9,6 +9,7 @@ declare -A SHORTCUTS=(
   [default:tab-close]="killactive"
   [default:toggle-float]="toggle-float"
   [firefox:reload]="CONTROL,R"
+  [firefox:select-all]="CONTROL,A"
   [firefox:tab-close]="CONTROL,W"
   [firefox:tab-goto-number]="ALT"
   [firefox:tab-new]="CONTROL,T"
