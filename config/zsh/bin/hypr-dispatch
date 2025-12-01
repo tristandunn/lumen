@@ -3,28 +3,28 @@
 set -euo pipefail
 
 declare -A SHORTCUTS=(
-  [copy:default]="SHIFT+CONTROL,C"
-  [paste:default]="SHIFT+CONTROL,V"
-  [reload:firefox]="CONTROL,R"
-  [save:default]="CONTROL,S"
-  [tab-close:default]="killactive"
-  [tab-close:firefox]="CONTROL,W"
-  [tab-close:kitty]="SHIFT+CONTROL,W"
-  [tab-goto-number:firefox]="ALT"
-  [tab-new:firefox]="CONTROL,T"
-  [tab-new:kitty]="SHIFT+CONTROL,T"
-  [tab-next:firefox]="CONTROL,TAB"
-  [tab-next:kitty]="SHIFT+CONTROL,RIGHT"
-  [tab-previous:firefox]="SHIFT+CONTROL,TAB"
-  [tab-previous:kitty]="SHIFT+CONTROL,LEFT"
-  [toggle-float:default]="toggle-float"
+  [default:copy]="SHIFT+CONTROL,C"
+  [default:paste]="SHIFT+CONTROL,V"
+  [default:save]="CONTROL,S"
+  [default:tab-close]="killactive"
+  [default:toggle-float]="toggle-float"
+  [firefox:reload]="CONTROL,R"
+  [firefox:tab-close]="CONTROL,W"
+  [firefox:tab-goto-number]="ALT"
+  [firefox:tab-new]="CONTROL,T"
+  [firefox:tab-next]="CONTROL,TAB"
+  [firefox:tab-previous]="SHIFT+CONTROL,TAB"
+  [kitty:tab-close]="SHIFT+CONTROL,W"
+  [kitty:tab-new]="SHIFT+CONTROL,T"
+  [kitty:tab-next]="SHIFT+CONTROL,RIGHT"
+  [kitty:tab-previous]="SHIFT+CONTROL,LEFT"
 )
 
 action=$1
 param=${2:-}
 class=$(hyprctl activewindow -j | jq -r '.class')
 address="0x$(hyprctl activewindow | head -n 1 | awk '{print $2}')"
-shortcut="${SHORTCUTS[$action:$class]:-${SHORTCUTS[$action:default]}}"
+shortcut="${SHORTCUTS[$class:$action]:-${SHORTCUTS[default:$action]}}"
 
 if [[ -z "$shortcut" ]]; then
   exit 1
