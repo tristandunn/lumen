@@ -17,6 +17,7 @@ install:
 	make -C config/zsh install
 	make -C config/steam install
 	make -C config/swayosd install
+	make -C config/waybar install
 	make -C config/mise install
 
 .PHONY: install

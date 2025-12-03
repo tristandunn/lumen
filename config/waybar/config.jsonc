@@ -1,0 +1,21 @@
+{
+  "layer": "top",
+  "position": "top",
+  "height": 34,
+
+  "modules-left": [],
+  "modules-center": ["hyprland/workspaces"],
+  "modules-right": ["custom/clock"],
+
+  "hyprland/workspaces": {
+    "format": "{name}",
+    "on-click": "activate",
+    "sort-by-number": true
+  },
+
+  "custom/clock": {
+    "exec": "date +'%-I:%M %p'",
+    "interval": 5,
+    "tooltip": false
+  }
+}
