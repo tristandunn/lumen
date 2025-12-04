@@ -18,5 +18,6 @@ install:
 	make -C config/steam install
 	make -C config/swayosd install
 	make -C config/mise install
+	make -C config/iwd install
 
 .PHONY: install
