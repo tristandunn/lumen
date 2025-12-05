@@ -1,0 +1,6 @@
+{
+  "detachKeys": "ctrl-z,z",
+  "features": {
+    "buildkit": true
+  }
+}
