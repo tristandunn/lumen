@@ -188,6 +188,23 @@ this is primarily for emergency memory pressure or hibernation.
 echo "vm.swappiness=10" > /etc/sysctl.d/99-swappiness.conf
 ```
 
+## Create a Temporary File System
+
+Configure `/tmp` as a `tmpfs` with a 4GB limit. This keeps temporary files in
+RAM for faster access and automatically clears them on reboot. The size is a
+maximum limit, not a reservation—unused space costs no memory.
+
+```sh
+vim /etc/fstab
+
+tmpfs /tmp tmpfs rw,nodev,nosuid,size=4G 0 0
+```
+
+The mount options provide security hardening:
+
+- `nodev` - Prevents device files from being created.
+- `nosuid` - Prevents setuid binaries from running.
+
 ## Set a Time Zone
 
 Configure the system timezone and synchronize the hardware clock to ensure
