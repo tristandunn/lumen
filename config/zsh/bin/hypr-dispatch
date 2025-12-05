@@ -16,6 +16,7 @@ declare -A SHORTCUTS=(
   [firefox:tab-next]="CONTROL,TAB"
   [firefox:tab-previous]="SHIFT+CONTROL,TAB"
   [kitty:tab-close]="SHIFT+CONTROL,W"
+  [kitty:tab-goto-number]="CONTROL+ALT"
   [kitty:tab-new]="SHIFT+CONTROL,T"
   [kitty:tab-next]="SHIFT+CONTROL,RIGHT"
   [kitty:tab-previous]="SHIFT+CONTROL,LEFT"
