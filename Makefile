@@ -5,6 +5,7 @@ install:
 	make -C config/keyd install
 	make -C config/hypr install
 	make -C config/elephant install
+	make -C config/claude install
 	make -C config/docker install
 	make -C config/firefox install
 	make -C config/git install
