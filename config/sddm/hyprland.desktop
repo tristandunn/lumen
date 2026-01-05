@@ -1,4 +1,4 @@
 [Desktop Entry]
 Name=Hyprland
-Exec=Hyprland
+Exec=start-hyprland
 Type=Application
