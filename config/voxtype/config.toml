@@ -1,0 +1,17 @@
+# See https://github.com/peteonrails/voxtype/blob/main/docs/CONFIGURATION.md
+# for details.
+
+[hotkey]
+enabled = false
+
+# Hyprland output hooks - suppress modifiers during typing
+# voxtype setup compositor hyprland
+[output]
+pre_output_command = "hyprctl dispatch submap voxtype_suppress"
+post_output_command = "hyprctl dispatch submap reset"
+
+[output.notification]
+on_transcription = false
+
+[status]
+icon_theme = "minimal"
