@@ -1,5 +1,6 @@
 install:
 	make -C config/yay install
+	make -C config/pacman install
 	make -C config/bluetooth install
 	make -C config/magic-mouse install
 	make -C config/keyd install
