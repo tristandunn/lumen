@@ -2,6 +2,7 @@ install: packages link service
 
 link:
 	sudo mkdir -p /etc/NetworkManager/conf.d
+	sudo ln -sfnv $(shell pwd)/dns.conf /etc/NetworkManager/conf.d/dns.conf
 	sudo ln -sfnv $(shell pwd)/wifi-backend.conf /etc/NetworkManager/conf.d/wifi-backend.conf
 
 packages:
