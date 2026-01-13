@@ -1,0 +1,127 @@
+#!/usr/bin/env python3
+
+"""
+Generate a seccomp BPF filter for the Claude Code sandbox.
+
+Outputs raw BPF bytecode to stdout for use with bwrap --seccomp.
+"""
+
+import sys
+
+try:
+  import seccomp
+except ImportError:
+  print("Error: python-libseccomp not installed", file=sys.stderr)
+  print("Install with: sudo pacman -S python-libseccomp", file=sys.stderr)
+  sys.exit(1)
+
+
+def build_filter() -> seccomp.SyscallFilter:
+  # Start with a default allow policy and block dangerous syscalls.
+  f = seccomp.SyscallFilter(seccomp.ALLOW)
+
+  # Block syscalls that could be used for container escape or privilege escalation.
+  dangerous_syscalls = [
+    # Kernel modules.
+    "create_module",
+    "delete_module",
+    "finit_module",
+    "get_kernel_syms",
+    "init_module",
+    "query_module",
+
+    # System control.
+    "acct",
+    "kexec_file_load",
+    "kexec_load",
+    "reboot",
+    "swapon",
+    "swapoff",
+
+    # Namespace and container escape.
+    "open_by_handle_at",
+    "pivot_root",
+    "setns",
+    "unshare",
+    "userfaultfd",
+
+    # Mount and filesystem.
+    "mount",
+    "mount_setattr",
+    "move_mount",
+    "fsmount",
+    "fsopen",
+    "fsconfig",
+    "fspick",
+    "open_tree",
+    "umount",
+    "umount2",
+
+    # Process debugging and tracing.
+    "kcmp",
+    "lookup_dcookie",
+    "perf_event_open",
+    "process_vm_readv",
+    "process_vm_writev",
+    "ptrace",
+
+    # Time manipulation.
+    "adjtimex",
+    "clock_adjtime",
+    "clock_settime",
+    "settimeofday",
+    "stime",
+
+    # Memory policy (NUMA).
+    "get_mempolicy",
+    "mbind",
+    "move_pages",
+    "set_mempolicy",
+    "set_mempolicy_home_node",
+
+    # Hardware and raw I/O.
+    "ioperm",
+    "iopl",
+    "modify_ldt",
+    "vm86",
+    "vm86old",
+
+
+    # Security keys and BPF.
+    "add_key",
+    "bpf",
+    "keyctl",
+    "request_key",
+
+    # Resource quotas.
+    "quotactl",
+    "quotactl_fd",
+
+    # Execution domain.
+    "personality",
+
+    # Deprecated syscalls (still dangerous).
+    "_sysctl",
+    "nfsservctl",
+    "sysfs",
+    "uselib",
+    "ustat",
+  ]
+
+  for syscall in dangerous_syscalls:
+    try:
+      f.add_rule(seccomp.ERRNO(1), syscall)
+    except seccomp.SeccompError:
+      # Syscall may not exist on this architecture.
+      pass
+
+  return f
+
+
+def main() -> None:
+  f = build_filter()
+  f.export_bpf(sys.stdout.buffer)
+
+
+if __name__ == "__main__":
+  main()

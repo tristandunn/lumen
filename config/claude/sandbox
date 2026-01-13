@@ -1,0 +1,141 @@
+#!/bin/bash
+
+#
+# Sandbox wrapper for Claude Code using bubblewrap.
+#
+
+set -euo pipefail
+
+readonly CLAUDE_DIR="$HOME/.claude"
+readonly CURRENT_DIR="$(pwd)"
+readonly MISE_CACHE_DIR="$HOME/.cache/mise"
+readonly MISE_DATA_DIR="$HOME/.local/share/mise"
+readonly SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
+readonly SECCOMP_FILTER="$SCRIPT_DIR/seccomp-filter"
+
+build_bwrap_args() {
+  local args=()
+
+  # Mount read-only system directories.
+  args+=(--ro-bind /usr /usr)
+  args+=(--ro-bind /lib /lib)
+  args+=(--ro-bind /lib64 /lib64)
+  args+=(--ro-bind /bin /bin)
+  args+=(--ro-bind /sbin /sbin)
+  args+=(--proc /proc)
+  args+=(--dev /dev)
+
+  # Create isolated tmpfs mounts.
+  args+=(--tmpfs /tmp)
+  args+=(--tmpfs /var)
+  args+=(--tmpfs /run)
+  args+=(--tmpfs "$HOME")
+
+  # Share the network namespace and bind DNS configuration.
+  args+=(--share-net)
+  args+=(--ro-bind /etc/resolv.conf /etc/resolv.conf)
+
+  if [[ -f /etc/hosts ]]; then
+    args+=(--ro-bind /etc/hosts /etc/hosts)
+  fi
+
+  if [[ -f /etc/nsswitch.conf ]]; then
+    args+=(--ro-bind /etc/nsswitch.conf /etc/nsswitch.conf)
+  fi
+
+  # Bind SSL certificate directories.
+  if [[ -d /etc/ssl ]]; then
+    args+=(--ro-bind /etc/ssl /etc/ssl)
+  fi
+
+  if [[ -d /etc/ca-certificates ]]; then
+    args+=(--ro-bind /etc/ca-certificates /etc/ca-certificates)
+  fi
+
+  if [[ -d /etc/pki ]]; then
+    args+=(--ro-bind /etc/pki /etc/pki)
+  fi
+
+  # Set uid and gid to match the current user.
+  args+=(--uid "$(id -u)")
+  args+=(--gid "$(id -g)")
+
+  # Bind git configuration.
+  if [[ -f "$HOME/.gitconfig" ]]; then
+    args+=(--ro-bind "$HOME/.gitconfig" "$HOME/.gitconfig")
+  fi
+
+  # Bind Claude Code directories and configuration.
+  args+=(--bind "$CLAUDE_DIR" "$CLAUDE_DIR")
+  args+=(--ro-bind "$HOME/.local/bin" "$HOME/.local/bin")
+  args+=(--ro-bind "$HOME/.local/share/claude" "$HOME/.local/share/claude")
+
+  if [[ -f "$HOME/.claude.json" ]]; then
+    args+=(--bind "$HOME/.claude.json" "$HOME/.claude.json")
+  fi
+
+  if [[ -d "$HOME/.lumen" ]]; then
+    args+=(--ro-bind "$HOME/.lumen" "$HOME/.lumen")
+  fi
+
+  # Bind and switch to the current working directory.
+  args+=(--bind "$CURRENT_DIR" "$CURRENT_DIR")
+  args+=(--chdir "$CURRENT_DIR")
+
+  # Bind mise runtime version manager directories.
+  args+=(--setenv MISE_DATA_DIR "$MISE_DATA_DIR")
+  args+=(--setenv MISE_CACHE_DIR "$MISE_CACHE_DIR")
+
+  if [[ -d "$MISE_CACHE_DIR" ]]; then
+    args+=(--ro-bind "$MISE_CACHE_DIR" "$MISE_CACHE_DIR")
+  fi
+
+  if [[ -d "$MISE_DATA_DIR/installs" ]]; then
+    args+=(--ro-bind "$MISE_DATA_DIR/installs" "$MISE_DATA_DIR/installs")
+  fi
+
+  if [[ -d "$MISE_DATA_DIR/shims" ]]; then
+    args+=(--ro-bind "$MISE_DATA_DIR/shims" "$MISE_DATA_DIR/shims")
+  fi
+
+  # Isolate all namespaces except network.
+  args+=(--unshare-user)
+  args+=(--unshare-pid)
+  args+=(--unshare-ipc)
+  args+=(--unshare-uts)
+  args+=(--unshare-cgroup)
+  args+=(--hostname "sandbox")
+
+  # Prevent terminal escape and ensure cleanup on exit.
+  args+=(--new-session)
+  args+=(--die-with-parent)
+
+  # Preserve essential environment variables.
+  args+=(--setenv HOME "$HOME")
+  args+=(--setenv USER "$USER")
+  args+=(--setenv TERM "${TERM:-xterm-256color}")
+  args+=(--setenv LANG "${LANG:-en_US.UTF-8}")
+  args+=(--setenv SHELL "${SHELL:-/bin/bash}")
+
+  printf '%s\n' "${args[@]}"
+}
+
+main() {
+  local -a bwrap_args
+  local -a seccomp_args=()
+
+  mapfile -t bwrap_args < <(build_bwrap_args)
+
+  # Generate the seccomp BPF filter and open it on fd 10.
+  if [[ -x "$SECCOMP_FILTER" ]]; then
+    exec 10< <("$SECCOMP_FILTER")
+    seccomp_args=(--seccomp 10)
+  fi
+
+  exec bwrap "${bwrap_args[@]}" "${seccomp_args[@]}" \
+    "$(readlink -f "$(command -v claude)")" \
+    --dangerously-skip-permissions \
+    "$@"
+}
+
+main "$@"
