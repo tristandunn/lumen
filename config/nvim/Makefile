@@ -16,6 +16,10 @@ packages:
 		tailwindcss-language-server \
 		yaml-language-server
 
+# Note: The stylelint-lsp package requires a PGP key not on keyservers.
+#
+#   curl -s https://github.com/bmatcuk.gpg | gpg --import
+#
 packages-aur:
 	yay -S --needed --noconfirm \
 		dockerfile-language-server \
