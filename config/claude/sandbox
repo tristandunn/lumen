@@ -65,6 +65,15 @@ build_bwrap_args() {
     args+=(--ro-bind "$HOME/.gitconfig" "$HOME/.gitconfig")
   fi
 
+  # Bind alias and zsh configuration.
+  if [[ -f "$HOME/.aliases" ]]; then
+    args+=(--ro-bind "$HOME/.aliases" "$HOME/.aliases")
+  fi
+
+  if [[ -f "$HOME/.zshrc" ]]; then
+    args+=(--ro-bind "$HOME/.zshrc" "$HOME/.zshrc")
+  fi
+
   # Create the Claude Code directory.
   args+=(--dir "$CLAUDE_DIR")
 
@@ -130,11 +139,12 @@ build_bwrap_args() {
   args+=(--die-with-parent)
 
   # Preserve essential environment variables.
+  args+=(--setenv CLAUDE_ENV_FILE "$HOME/.zshrc")
   args+=(--setenv HOME "$HOME")
-  args+=(--setenv USER "$USER")
-  args+=(--setenv TERM "${TERM:-xterm-256color}")
   args+=(--setenv LANG "${LANG:-en_US.UTF-8}")
   args+=(--setenv SHELL "${SHELL:-/bin/bash}")
+  args+=(--setenv TERM "${TERM:-xterm-256color}")
+  args+=(--setenv USER "$USER")
 
   printf '%s\n' "${args[@]}"
 }
