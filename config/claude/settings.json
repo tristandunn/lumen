@@ -18,6 +18,25 @@
             "command": "$HOME/.claude/scripts/lint-hook"
           }
         ]
+      },
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/tristan/.lumen/config/claude/hooks/notify"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/tristan/.lumen/config/claude/hooks/notify"
+          }
+        ]
       }
     ]
   },

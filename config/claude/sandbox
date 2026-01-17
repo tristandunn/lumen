@@ -14,6 +14,9 @@ readonly PROJECT_ID="$(echo "$CURRENT_DIR" | tr '/' '-')"
 readonly SANDBOX_DATA_DIR="$CLAUDE_DIR/sandbox/$PROJECT_ID"
 readonly SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 readonly SECCOMP_FILTER="$SCRIPT_DIR/seccomp-filter"
+readonly PUSHOVER_ENV="$SCRIPT_DIR/secrets/pushover.env"
+
+REMOTE_MODE=0
 
 build_bwrap_args() {
   local args=()
@@ -162,6 +165,18 @@ build_bwrap_args() {
   args+=(--setenv TERM "${TERM:-xterm-256color}")
   args+=(--setenv USER "$USER")
 
+  # Pass remote mode and Pushover credentials when enabled.
+  if [[ "$REMOTE_MODE" == "1" ]]; then
+    args+=(--setenv CLAUDE_REMOTE_MODE "1")
+
+    if [[ -f "$PUSHOVER_ENV" ]]; then
+      # shellcheck source=/dev/null
+      source "$PUSHOVER_ENV"
+      args+=(--setenv PUSHOVER_USER_KEY "${PUSHOVER_USER_KEY:-}")
+      args+=(--setenv PUSHOVER_API_TOKEN "${PUSHOVER_API_TOKEN:-}")
+    fi
+  fi
+
   printf '%s\n' "${args[@]}"
 }
 
@@ -178,6 +193,21 @@ create_sandbox_storage() {
 main() {
   local -a bwrap_args
   local -a seccomp_args=()
+  local -a claude_args=()
+
+  # Parse arguments.
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -r|--remote)
+        REMOTE_MODE=1
+        shift
+        ;;
+      *)
+        claude_args+=("$1")
+        shift
+        ;;
+    esac
+  done
 
   mapfile -t bwrap_args < <(build_bwrap_args)
 
@@ -192,7 +222,7 @@ main() {
   exec bwrap "${bwrap_args[@]}" "${seccomp_args[@]}" \
     "$(readlink -f "$(command -v claude)")" \
     --dangerously-skip-permissions \
-    "$@"
+    "${claude_args[@]}"
 }
 
 main "$@"
