@@ -67,7 +67,7 @@ if [ -z "$TMUX" ]; then
     tmux send-keys -t 3 'git status' C-m
 
     # Prefill commands in the other windows.
-    tmux send-keys -t claude 'claude'
+    tmux send-keys -t claude 'sandbox'
     tmux send-keys -t server 'rs'
   fi
 
