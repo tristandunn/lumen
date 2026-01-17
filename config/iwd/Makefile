@@ -13,5 +13,7 @@ service:
 	sudo systemctl disable wpa_supplicant || true
 	sudo systemctl enable --now iwd
 	sudo systemctl restart NetworkManager
+	nm-online --timeout=30
+	@until getent hosts archlinux.org >/dev/null 2>&1; do sleep 0.5; done
 
 .PHONY: install link packages service
