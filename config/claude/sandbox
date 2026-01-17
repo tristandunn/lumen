@@ -12,6 +12,9 @@ readonly MISE_CACHE_DIR="$HOME/.cache/mise"
 readonly MISE_DATA_DIR="$HOME/.local/share/mise"
 readonly SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 readonly SECCOMP_FILTER="$SCRIPT_DIR/seccomp-filter"
+readonly PUSHOVER_ENV="$SCRIPT_DIR/secrets/pushover.env"
+
+REMOTE_MODE=0
 
 build_bwrap_args() {
   local args=()
@@ -136,12 +139,39 @@ build_bwrap_args() {
   args+=(--setenv LANG "${LANG:-en_US.UTF-8}")
   args+=(--setenv SHELL "${SHELL:-/bin/bash}")
 
+  # Pass remote mode and Pushover credentials when enabled.
+  if [[ "$REMOTE_MODE" == "1" ]]; then
+    args+=(--setenv CLAUDE_REMOTE_MODE "1")
+
+    if [[ -f "$PUSHOVER_ENV" ]]; then
+      # shellcheck source=/dev/null
+      source "$PUSHOVER_ENV"
+      args+=(--setenv PUSHOVER_USER_KEY "${PUSHOVER_USER_KEY:-}")
+      args+=(--setenv PUSHOVER_API_TOKEN "${PUSHOVER_API_TOKEN:-}")
+    fi
+  fi
+
   printf '%s\n' "${args[@]}"
 }
 
 main() {
   local -a bwrap_args
   local -a seccomp_args=()
+  local -a claude_args=()
+
+  # Parse arguments.
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+      -r|--remote)
+        REMOTE_MODE=1
+        shift
+        ;;
+      *)
+        claude_args+=("$1")
+        shift
+        ;;
+    esac
+  done
 
   mapfile -t bwrap_args < <(build_bwrap_args)
 
@@ -154,7 +184,7 @@ main() {
   exec bwrap "${bwrap_args[@]}" "${seccomp_args[@]}" \
     "$(readlink -f "$(command -v claude)")" \
     --dangerously-skip-permissions \
-    "$@"
+    "${claude_args[@]}"
 }
 
 main "$@"

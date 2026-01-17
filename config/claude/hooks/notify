@@ -1,0 +1,60 @@
+#!/bin/bash
+
+#
+# Push notification hook for remote Claude Code sessions.
+# Sends Pushover notifications for AskUserQuestion and Stop events.
+#
+
+set -euo pipefail
+
+# Only send notifications in remote mode.
+if [[ "${CLAUDE_REMOTE_MODE:-}" != "1" ]]; then
+  exit 0
+fi
+
+# Verify Pushover credentials are available.
+if [[ -z "${PUSHOVER_USER_KEY:-}" || -z "${PUSHOVER_API_TOKEN:-}" ]]; then
+  exit 0
+fi
+
+# Read hook JSON from stdin.
+hook_json="$(cat)"
+
+# Extract hook type and tool name.
+hook_type="$(echo "$hook_json" | jq -r '.hook_type // empty')"
+tool_name="$(echo "$hook_json" | jq -r '.tool_name // empty')"
+
+# Get project name from current working directory.
+project="$(basename "$PWD")"
+
+# Determine notification content based on event type.
+title=""
+message=""
+
+case "$hook_type" in
+  PostToolUse)
+    if [[ "$tool_name" == "AskUserQuestion" ]]; then
+      title="[$project] Claude needs input"
+      message="$(echo "$hook_json" | jq -r '.tool_input.questions[0].question // "Claude is waiting for your response."')"
+    fi
+    ;;
+  Stop)
+    title="[$project] Claude finished"
+    message="$(echo "$hook_json" | jq -r '.stop_hook_reason // "Task completed."')"
+    ;;
+esac
+
+# Exit if no notification to send.
+if [[ -z "$title" ]]; then
+  exit 0
+fi
+
+# Send Pushover notification.
+curl -s \
+  --form-string "token=$PUSHOVER_API_TOKEN" \
+  --form-string "user=$PUSHOVER_USER_KEY" \
+  --form-string "title=$title" \
+  --form-string "message=$message" \
+  https://api.pushover.net/1/messages.json > /dev/null
+
+exit 0

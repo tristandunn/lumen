@@ -14,6 +14,25 @@
             "command": "jq -r '.tool_input.file_path' | { read file_path; if echo \"$file_path\" | grep -qE '(\\.rb$|Rakefile$|Gemfile$)'; then rubocop -A \"$file_path\" 2>&1 || true; fi; }"
           }
         ]
+      },
+      {
+        "matcher": "AskUserQuestion",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/tristan/.lumen/config/claude/hooks/notify"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/home/tristan/.lumen/config/claude/hooks/notify"
+          }
+        ]
       }
     ]
   },
