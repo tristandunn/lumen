@@ -1,4 +1,4 @@
-install: link
+install: packages link
 
 link:
 	mkdir -p $(HOME)/.config/pipewire/pipewire.conf.d
@@ -8,4 +8,7 @@ link:
 	ln -sfnv $(shell pwd)/wireplumber.conf.d/50-bluetooth-codecs.conf \
 		$(HOME)/.config/wireplumber/wireplumber.conf.d/50-bluetooth-codecs.conf
 
-.PHONY: install link
+packages:
+	sudo pacman -S --needed --noconfirm libldac
+
+.PHONY: install link packages
