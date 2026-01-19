@@ -91,7 +91,7 @@ build_bwrap_args() {
 
   # Bind the credentials file for API authentication.
   if [[ -f "$CLAUDE_DIR/.credentials.json" ]]; then
-    args+=(--ro-bind "$CLAUDE_DIR/.credentials.json" "$CLAUDE_DIR/.credentials.json")
+    args+=(--bind "$CLAUDE_DIR/.credentials.json" "$CLAUDE_DIR/.credentials.json")
   fi
 
   # Bind the executable directories.
