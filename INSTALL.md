@@ -71,8 +71,8 @@ lsblk
 
 ## Format the Partitions
 
-The EFI system partition must be formatted as FAT32, which is required by UEFI
-specification. The `-F32` flag explicitly specifies FAT32 format.
+The EFI system partition must be formatted as FAT32, which is required by the
+UEFI specification. The `-F32` flag explicitly specifies FAT32 format.
 
 ```sh
 mkfs.fat -F32 /dev/nvme0n1p1
@@ -310,7 +310,7 @@ options root=/dev/nvme0n1p2 rw quiet
 Create a regular user account with `sudo` privileges. Be sure to replace
 `username` with your desired username. The flags provided are:
 
-- `-m` - Creates a home directory.
+- `-m` - Create a home directory.
 - `-G wheel` - Add user to the wheel group for `sudo` access.
 - `-s /usr/bin/zsh` - Set `zsh` as the default shell.
 
