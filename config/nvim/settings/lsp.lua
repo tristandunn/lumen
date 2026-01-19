@@ -34,7 +34,7 @@ vim.diagnostic.config({
 
   -- Always display diagnostics inline as virtual text.
   virtual_text = {
-    source = "always"
+    source = true
   }
 })
 
