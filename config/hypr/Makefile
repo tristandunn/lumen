@@ -9,7 +9,6 @@ link:
 	ln -sfnv $(shell pwd)/input.conf $(HOME)/.config/hypr/input.conf
 	ln -sfnv $(shell pwd)/monitors.conf $(HOME)/.config/hypr/monitors.conf
 	ln -sfnv $(shell pwd)/startup.conf $(HOME)/.config/hypr/startup.conf
-	ln -sfnv $(shell pwd)/windowrules.conf $(HOME)/.config/hypr/windowrules.conf
 
 packages:
 	sudo pacman -S --needed --noconfirm hyprland xdg-desktop-portal-hyprland
