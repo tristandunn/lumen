@@ -220,7 +220,7 @@ hwclock --systohc
 
 ## Set a Localization
 
-Configure the system language and regional settings which determines how dates,
+Configure the system language and regional settings, which determine how dates,
 numbers, currency, and text are formatted and displayed.
 
 ```sh
