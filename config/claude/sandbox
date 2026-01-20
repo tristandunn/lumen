@@ -10,6 +10,8 @@ readonly CLAUDE_DIR="$HOME/.claude"
 readonly CURRENT_DIR="$(pwd)"
 readonly MISE_CACHE_DIR="$HOME/.cache/mise"
 readonly MISE_DATA_DIR="$HOME/.local/share/mise"
+readonly PROJECT_ID="$(echo "$CURRENT_DIR" | tr '/' '-')"
+readonly SANDBOX_DATA_DIR="$CLAUDE_DIR/sandbox/$PROJECT_ID"
 readonly SCRIPT_DIR="$(cd "$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")" && pwd)"
 readonly SECCOMP_FILTER="$SCRIPT_DIR/seccomp-filter"
 
@@ -94,6 +96,14 @@ build_bwrap_args() {
     args+=(--bind "$CLAUDE_DIR/.credentials.json" "$CLAUDE_DIR/.credentials.json")
   fi
 
+  # Bind project-specific writable directories.
+  for dir in projects todos plans session-env debug shell-snapshots; do
+    args+=(--bind "$SANDBOX_DATA_DIR/$dir" "$CLAUDE_DIR/$dir")
+  done
+
+  # Bind project-specific history file.
+  args+=(--bind "$SANDBOX_DATA_DIR/history.jsonl" "$CLAUDE_DIR/history.jsonl")
+
   # Bind the executable directories.
   args+=(--ro-bind "$HOME/.local/bin" "$HOME/.local/bin")
   args+=(--ro-bind "$HOME/.local/share/claude" "$HOME/.local/share/claude")
@@ -149,11 +159,23 @@ build_bwrap_args() {
   printf '%s\n' "${args[@]}"
 }
 
+create_sandbox_storage() {
+  local dirs=(projects todos plans session-env debug shell-snapshots)
+
+  for dir in "${dirs[@]}"; do
+    mkdir -p "$SANDBOX_DATA_DIR/$dir"
+  done
+
+  touch "$SANDBOX_DATA_DIR/history.jsonl"
+}
+
 main() {
   local -a bwrap_args
   local -a seccomp_args=()
 
   mapfile -t bwrap_args < <(build_bwrap_args)
+
+  create_sandbox_storage
 
   # Generate the seccomp BPF filter and open it on fd 10.
   if [[ -x "$SECCOMP_FILTER" ]]; then
