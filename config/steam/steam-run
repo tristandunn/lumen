@@ -6,15 +6,16 @@ export AMD_VULKAN_ICD=RADV
 # Disable DXVK debug logging for slightly less overhead.
 export DXVK_LOG_LEVEL=none
 
+# Persist shader caches across game reinstalls.
+export DXVK_STATE_CACHE_PATH="$HOME/.cache/dxvk"
+export VKD3D_SHADER_CACHE_PATH="$HOME/.cache/vkd3d"
+
 # Pre-load shared libraries to reduce micro-stutter.
 export LD_BIND_NOW=1
 
 # Toggle FPS, CPU/GPU usage, and temperature overlay with F12.
 export MANGOHUD=1
 export MANGOHUD_CONFIG="no_display,toggle_hud=F12"
-
-# Pre-compile shader stages separately to reduce in-game stutter.
-export RADV_PERFTEST=gpl
 
 # Force SDL games, such as CS2, to use PipeWire for audio.
 export SDL_AUDIODRIVER=pipewire
