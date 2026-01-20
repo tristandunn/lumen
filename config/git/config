@@ -32,6 +32,7 @@
 [pull]
   ff = only
 [push]
+  autoSetupRemote = true
   default = nothing
 [rerere]
   enabled = true
