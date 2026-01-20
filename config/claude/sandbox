@@ -63,27 +63,18 @@ build_bwrap_args() {
   args+=(--gid "$(id -g)")
 
   # Bind git configuration.
-  if [[ -f "$HOME/.gitconfig" ]]; then
-    args+=(--ro-bind "$HOME/.gitconfig" "$HOME/.gitconfig")
-  fi
+  args+=(--ro-bind-try "$HOME/.gitconfig" "$HOME/.gitconfig")
 
   # Bind alias and zsh configuration.
-  if [[ -f "$HOME/.aliases" ]]; then
-    args+=(--ro-bind "$HOME/.aliases" "$HOME/.aliases")
-  fi
-
-  if [[ -f "$HOME/.zshrc" ]]; then
-    args+=(--ro-bind "$HOME/.zshrc" "$HOME/.zshrc")
-  fi
+  args+=(--ro-bind-try "$HOME/.aliases" "$HOME/.aliases")
+  args+=(--ro-bind-try "$HOME/.zshrc" "$HOME/.zshrc")
 
   # Create the Claude Code directory.
   args+=(--dir "$CLAUDE_DIR")
 
   # Bind commands and plugins as read-only.
   for dir in commands plugins; do
-    if [[ -d "$CLAUDE_DIR/$dir" ]]; then
-      args+=(--ro-bind "$CLAUDE_DIR/$dir" "$CLAUDE_DIR/$dir")
-    fi
+    args+=(--ro-bind-try "$CLAUDE_DIR/$dir" "$CLAUDE_DIR/$dir")
   done
 
   # Bind the settings file.
@@ -92,9 +83,7 @@ build_bwrap_args() {
   fi
 
   # Bind the credentials file for API authentication.
-  if [[ -f "$CLAUDE_DIR/.credentials.json" ]]; then
-    args+=(--bind "$CLAUDE_DIR/.credentials.json" "$CLAUDE_DIR/.credentials.json")
-  fi
+  args+=(--bind-try "$CLAUDE_DIR/.credentials.json" "$CLAUDE_DIR/.credentials.json")
 
   # Bind project-specific writable directories.
   for dir in projects todos plans session-env debug shell-snapshots; do
@@ -108,9 +97,8 @@ build_bwrap_args() {
   args+=(--ro-bind "$HOME/.local/bin" "$HOME/.local/bin")
   args+=(--ro-bind "$HOME/.local/share/claude" "$HOME/.local/share/claude")
 
-  if [[ -f "$HOME/.claude.json" ]]; then
-    args+=(--bind "$HOME/.claude.json" "$HOME/.claude.json")
-  fi
+  # Bind the configuration file.
+  args+=(--bind-try "$HOME/.claude.json" "$HOME/.claude.json")
 
   if [[ -d "$HOME/.lumen" ]]; then
     args+=(--ro-bind "$HOME/.lumen" "$HOME/.lumen")
