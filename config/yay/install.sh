@@ -15,7 +15,7 @@ fi
 
 # Clone the project.
 TEMP_DIR=$(mktemp -d)
-git clone https://aur.archlinux.org/yay.git "$TEMP_DIR"
+git clone https://aur.archlinux.org/yay-bin.git "$TEMP_DIR"
 
 # Install the package.
 cd "$TEMP_DIR"
