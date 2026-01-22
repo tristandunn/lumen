@@ -12,5 +12,6 @@ link:
 
 packages:
 	sudo pacman -S --needed --noconfirm hyprland xdg-desktop-portal-hyprland
+	yay -S --needed --noconfirm apple_cursor
 
 .PHONY: install link packages
