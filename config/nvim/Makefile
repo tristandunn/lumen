@@ -27,14 +27,12 @@ packages-aur:
 		vscode-langservers-extracted
 
 packages-npm:
-	npm install -g \
-		@herb-tools/language-server \
-		@herb-tools/linter
+	@npm list -g @herb-tools/language-server >/dev/null 2>&1 || npm install -g @herb-tools/language-server
+	@npm list -g @herb-tools/linter >/dev/null 2>&1 || npm install -g @herb-tools/linter
 
 packages-gem:
-	gem install \
-		ruby-lsp \
-		ruby-lsp-rails \
-		ruby-lsp-rspec
+	@gem list -i ruby-lsp >/dev/null 2>&1 || gem install ruby-lsp
+	@gem list -i ruby-lsp-rails >/dev/null 2>&1 || gem install ruby-lsp-rails
+	@gem list -i ruby-lsp-rspec >/dev/null 2>&1 || gem install ruby-lsp-rspec
 
 .PHONY: install link packages packages-aur packages-npm packages-gem
