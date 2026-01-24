@@ -41,8 +41,6 @@ def build_filter() -> seccomp.SyscallFilter:
     # Namespace and container escape.
     "open_by_handle_at",
     "pivot_root",
-    "setns",
-    "unshare",
     "userfaultfd",
 
     # Mount and filesystem.

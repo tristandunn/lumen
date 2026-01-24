@@ -26,6 +26,7 @@ build_bwrap_args() {
   args+=(--ro-bind /sbin /sbin)
   args+=(--proc /proc)
   args+=(--dev /dev)
+  args+=(--dev-bind /dev/shm /dev/shm)
 
   # Create isolated tmpfs mounts.
   args+=(--tmpfs /tmp)
@@ -122,6 +123,11 @@ build_bwrap_args() {
 
   if [[ -d "$MISE_DATA_DIR/shims" ]]; then
     args+=(--ro-bind "$MISE_DATA_DIR/shims" "$MISE_DATA_DIR/shims")
+  fi
+
+  # Bind the Selenium directory.
+  if [[ -d "$HOME/.cache/selenium" ]]; then
+    args+=(--ro-bind "$HOME/.cache/selenium" "$HOME/.cache/selenium")
   fi
 
   # Isolate all namespaces except network.
