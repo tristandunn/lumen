@@ -17,6 +17,7 @@
   ui = auto
 [core]
   attributesfile = ~/.config/git/attributes
+  excludesfile = ~/.config/git/ignore
   pager = less -r
 [diff]
   algorithm = histogram
