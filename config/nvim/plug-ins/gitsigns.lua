@@ -11,9 +11,7 @@ return {
 
     -- Stage the current buffer.
     set("n", "<Leader>sb", "<ESC>:Gitsigns stage_buffer<CR>")
-
-    -- Add the file at the current path.
-    set("n", "<Leader>sf", "<ESC>:!git add %:p<CR><CR>")
+    set("n", "<Leader>sf", "<ESC>:Gitsigns stage_buffer<CR>")
 
     -- Stage the current hunk.
     set("n", "<Leader>sh", "<ESC>:Gitsigns stage_hunk<CR>")
