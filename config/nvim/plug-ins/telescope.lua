@@ -11,6 +11,20 @@ return {
     -- Find a file.
     set("n", "<Leader>p", builtin.find_files)
 
+    -- Open unstaged files picker.
+    set("n", "<Leader>gn", function()
+      local pickers = require("telescope.pickers")
+      local finders = require("telescope.finders")
+      local themes  = require("telescope.themes")
+      local config  = require("telescope.config").values
+
+      pickers.new(themes.get_dropdown(), {
+        finder       = finders.new_oneshot_job({ "git", "diff", "--name-only" }),
+        prompt_title = "Unstaged Changes",
+        sorter       = config.generic_sorter({})
+      }):find()
+    end)
+
     -- Find a word.
     set("n", "<Leader>j", function()
       local word = vim.fn.expand("<cword>")

@@ -1,6 +1,13 @@
 return {
   init = function()
-    local set = vim.keymap.set
+    local gitsigns = require("gitsigns")
+    local set      = vim.keymap.set
+
+    -- Navigate to the next hunk.
+    set("n", "]c", gitsigns.next_hunk)
+
+    -- Navigate to the previous hunk.
+    set("n", "[c", gitsigns.prev_hunk)
 
     -- Stage the current buffer.
     set("n", "<Leader>sb", "<ESC>:Gitsigns stage_buffer<CR>")
