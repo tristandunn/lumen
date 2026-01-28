@@ -2,8 +2,10 @@ install: packages link
 
 link:
 	mkdir -p $(HOME)/.claude
+	mkdir -p $(HOME)/.claude/commands
 	mkdir -p $(HOME)/.local/bin
 	ln -sfnv $(shell pwd)/settings.json $(HOME)/.claude/settings.json
+	ln -sfnv $(shell pwd)/commands/commit-message.md $(HOME)/.claude/commands/
 	ln -sfnv $(shell pwd)/sandbox $(HOME)/.local/bin/sandbox
 
 packages:
