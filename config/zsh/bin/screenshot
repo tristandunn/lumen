@@ -14,13 +14,9 @@ if [[ "$mode" == "region" ]]; then
 
   grim -g "$geometry" "$filepath"
 elif [[ "$mode" == "window" ]]; then
-  window_info=$(hyprctl activewindow -j)
-  x=$(echo "$window_info" | jq -r '.at[0]')
-  y=$(echo "$window_info" | jq -r '.at[1]')
-  width=$(echo "$window_info" | jq -r '.size[0]')
-  height=$(echo "$window_info" | jq -r '.size[1]')
+  geometry=$(hyprctl activewindow -j | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
 
-  grim -g "${x},${y} ${width}x${height}" "$filepath"
+  grim -g "$geometry" "$filepath"
 elif [[ "$mode" == "screen" ]]; then
   grim "$filepath"
 fi
