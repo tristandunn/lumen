@@ -14,8 +14,8 @@ return {
     -- Run tests for the current file.
     set("n", "<Leader>f", "<Cmd>TestFile<CR>")
 
-    -- Use a custom pane runner.
-    vim.api.nvim_set_var("test#custom_strategies", { pane = vim.cmd.ExecuteCommandInPane })
-    vim.api.nvim_set_var("test#strategy", "pane")
+    -- Run tests in a Neovim terminal split at the bottom.
+    vim.g["test#strategy"]             = "neovim"
+    vim.g["test#neovim#term_position"] = "botright 24"
   end
 }
