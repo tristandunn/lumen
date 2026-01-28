@@ -14,8 +14,9 @@ link:
 	ln -sfnv $(shell pwd)/bin/llm $(HOME)/.local/bin/llm
 	ln -sfnv $(shell pwd)/bin/pkg $(HOME)/.local/bin/pkg
 	ln -sfnv $(shell pwd)/bin/t $(HOME)/.local/bin/t
+	ln -sfnv $(shell pwd)/bin/screenshot $(HOME)/.local/bin/screenshot
 
 packages:
-	sudo pacman -S --needed --noconfirm jq
+	sudo pacman -S --needed --noconfirm grim imv jq slurp
 
 .PHONY: install link packages

@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+screenshot_dir="$HOME/Pictures/Screenshots"
+mkdir -p "$screenshot_dir"
+
+timestamp=$(date +%Y-%m-%d-%H%M%S)
+filepath="$screenshot_dir/screenshot-$timestamp.png"
+mode=${1:-window}
+
+if [[ "$mode" == "region" ]]; then
+  geometry=$(slurp) || exit 0
+
+  grim -g "$geometry" "$filepath"
+elif [[ "$mode" == "window" ]]; then
+  window_info=$(hyprctl activewindow -j)
+  x=$(echo "$window_info" | jq -r '.at[0]')
+  y=$(echo "$window_info" | jq -r '.at[1]')
+  width=$(echo "$window_info" | jq -r '.size[0]')
+  height=$(echo "$window_info" | jq -r '.size[1]')
+
+  grim -g "${x},${y} ${width}x${height}" "$filepath"
+elif [[ "$mode" == "screen" ]]; then
+  grim "$filepath"
+fi
+
+imv "$filepath" &
