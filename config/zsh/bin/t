@@ -1,13 +1,13 @@
 #!/usr/bin/env bash
 
-SESSION_NAME="$(basename "$PWD" | tr . -)"
+SESSION_NAME="$(basename "${PWD}" | tr . -)"
 
 session_exists() {
-  tmux list-sessions | sed -E 's/:.*$//' | grep -q "^$SESSION_NAME$"
+  tmux list-sessions | sed -E 's/:.*$//' | grep -q "^${SESSION_NAME}$"
 }
 
-if [ -z "$TMUX" ]; then
-  if [ "$PWD" = "$HOME" ]; then
+if [ -z "${TMUX}" ]; then
+  if [ "${PWD}" = "${HOME}" ]; then
     if ! tmux list-sessions > /dev/null 2>&1; then
       echo "No sessions available."
       exit 1
@@ -15,7 +15,7 @@ if [ -z "$TMUX" ]; then
 
     SESSION_NAMES=()
     while IFS='' read -r line; do
-      SESSION_NAMES+=("$line")
+      SESSION_NAMES+=("${line}")
     done < <(tmux list-sessions -F\#S)
 
     if [ "${#SESSION_NAMES[@]}" -eq 0 ]; then
@@ -30,21 +30,21 @@ if [ -z "$TMUX" ]; then
     for name in "${SESSION_NAMES[@]}"; do
       k=$((k+1))
 
-      echo "  [$k] $name"
+      echo "  [${k}] ${name}"
     done
 
     echo
 
     read -r input
 
-    if [[ $input =~ ^[0-9]+$ ]] && [ "$input" -gt 0 ] && [ "$input" -le $k ]; then
+    if [[ ${input} =~ ^[0-9]+$ ]] && [ "${input}" -gt 0 ] && [ "${input}" -le ${k} ]; then
       SESSION_NAME="${SESSION_NAMES[input - 1]}"
     else
       exit 0
     fi
   elif ! session_exists; then
     # Create a new session.
-    tmux new-session -d -s "$SESSION_NAME" -x "$(tput cols)" -y "$(tput lines)"
+    tmux new-session -d -s "${SESSION_NAME}" -x "$(tput cols)" -y "$(tput lines)"
 
     # Rename the window.
     tmux rename-window -t 1 code
@@ -72,7 +72,7 @@ if [ -z "$TMUX" ]; then
   fi
 
   # Attach to the session.
-  tmux attach-session -t "$SESSION_NAME:1"
+  tmux attach-session -t "${SESSION_NAME}:1"
 else
-  tmux switch-client -t "$SESSION_NAME"
+  tmux switch-client -t "${SESSION_NAME}"
 fi

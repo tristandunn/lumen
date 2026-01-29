@@ -14,7 +14,7 @@ case "${1:-}" in
     ;;
   description)
     sink="${2:-$(pactl get-default-sink)}"
-    pactl list sinks 2>/dev/null | grep -A 15 "Name: $sink" | grep 'Description:' | sed 's/.*Description: //; s/ Analog Stereo//' || echo "$sink"
+    pactl list sinks 2>/dev/null | grep -A 15 "Name: ${sink}" | grep 'Description:' | sed 's/.*Description: //; s/ Analog Stereo//' || echo "${sink}"
     ;;
   *)
     echo "Usage: audio-sink <alsa|bluetooth|current|description> [sink]" >&2

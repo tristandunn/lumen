@@ -44,7 +44,7 @@ cmd_outdated() {
   local outdated_packages
   outdated_packages=$(yay -Qu 2>/dev/null | sort) || true
 
-  if [[ -z "$outdated_packages" ]]; then
+  if [[ -z "${outdated_packages}" ]]; then
     echo -e "${GREEN}✓${RESET} All packages are up to date."
     return 0
   fi
@@ -53,16 +53,16 @@ cmd_outdated() {
   echo
 
   while IFS= read -r line; do
-    if [[ -z "$line" ]]; then
+    if [[ -z "${line}" ]]; then
       continue
     fi
 
     local name current_version latest_version
 
-    read -r name current_version _ latest_version <<< "$line"
+    read -r name current_version _ latest_version <<< "${line}"
 
-    printf "  %-30s ${BLUE}%-20s${RESET} → ${GREEN}%s${RESET}\n" "$name" "$current_version" "$latest_version"
-  done <<< "$outdated_packages"
+    printf "  %-30s ${BLUE}%-20s${RESET} → ${GREEN}%s${RESET}\n" "${name}" "${current_version}" "${latest_version}"
+  done <<< "${outdated_packages}"
 
   echo
   echo -e "${BLUE}Commands:${RESET}"
@@ -76,35 +76,35 @@ cmd_list() {
 
   # Build associative array of AUR/foreign packages.
   while IFS= read -r line; do
-    if [[ -z "$line" ]]; then
+    if [[ -z "${line}" ]]; then
       continue
     fi
 
     local pkg _
-    read -r pkg _ <<< "$line"
+    read -r pkg _ <<< "${line}"
 
-    aur_pkgs[$pkg]=1
+    aur_pkgs[${pkg}]=1
   done < <(yay -Qm 2>/dev/null)
 
   # Read explicitly installed packages and categorize.
   while IFS= read -r line; do
-    if [[ -z "$line" ]]; then
+    if [[ -z "${line}" ]]; then
       continue
     fi
 
     local pkg _
-    read -r pkg _ <<< "$line"
+    read -r pkg _ <<< "${line}"
 
-    if [[ -v aur_pkgs[$pkg] ]]; then
-      aur_packages+=("$pkg")
+    if [[ -v aur_pkgs[${pkg}] ]]; then
+      aur_packages+=("${pkg}")
     else
-      official_packages+=("$pkg")
+      official_packages+=("${pkg}")
     fi
   done < <(yay -Qe 2>/dev/null | sort)
 
   local total_count=$((${#official_packages[@]} + ${#aur_packages[@]}))
 
-  if [[ $total_count -eq 0 ]]; then
+  if [[ ${total_count} -eq 0 ]]; then
     echo -e "${RED}✗${RESET} No explicitly installed packages found."
     return 1
   fi
@@ -122,21 +122,21 @@ cmd_list() {
 }
 
 cmd_info() {
-  if [[ $# -eq 0 ]]; then
+  if [[ ${#} -eq 0 ]]; then
     echo -e "${RED}✗${RESET} Error: No package specified."
     return 1
   fi
 
-  yay -Si -- "$@" 2>/dev/null || yay -Qi -- "$@"
+  yay -Si -- "${@}" 2>/dev/null || yay -Qi -- "${@}"
 }
 
 cmd_update() {
   echo -e "${BLUE}→${RESET} Updating all packages..."
-  yay -Syu || return $?
+  yay -Syu || return ${?}
 }
 
 cmd_install() {
-  if [[ $# -eq 0 ]]; then
+  if [[ ${#} -eq 0 ]]; then
     echo -e "${RED}✗${RESET} Error: No package specified."
     return 1
   fi
@@ -149,18 +149,18 @@ cmd_install() {
     return 1
   fi
 
-  echo -e "${BLUE}→${RESET} Installing packages: $*"
-  yay -S --needed -- "$@"
+  echo -e "${BLUE}→${RESET} Installing packages: ${*}"
+  yay -S --needed -- "${@}"
 }
 
 cmd_remove() {
-  if [[ $# -eq 0 ]]; then
+  if [[ ${#} -eq 0 ]]; then
     echo -e "${RED}✗${RESET} Error: No package specified."
     return 1
   fi
 
-  echo -e "${YELLOW}→${RESET} Removing packages and dependencies: $*"
-  yay -Rns -- "$@"
+  echo -e "${YELLOW}→${RESET} Removing packages and dependencies: ${*}"
+  yay -Rns -- "${@}"
 }
 
 cmd_cleanup() {
@@ -171,14 +171,14 @@ cmd_cleanup() {
   echo -e "${BLUE}→${RESET} Removing orphaned dependencies..."
 
   if orphans=$(yay -Qdtq 2>/dev/null); then
-    if [[ -n "$orphans" ]]; then
-      echo "$orphans"
+    if [[ -n "${orphans}" ]]; then
+      echo "${orphans}"
       echo
       read -p "Remove these orphaned packages? [y/N] " -n 1 -r
       echo
 
-      if [[ $REPLY =~ ^[Yy]$ ]]; then
-        echo "$orphans" | xargs -r yay -Rns --
+      if [[ ${REPLY} =~ ^[Yy]$ ]]; then
+        echo "${orphans}" | xargs -r yay -Rns --
         echo -e "${GREEN}✓${RESET} Orphaned packages removed."
       else
         echo "Skipped"
@@ -192,41 +192,41 @@ cmd_cleanup() {
 }
 
 main() {
-  if [[ $# -eq 0 ]]; then
+  if [[ ${#} -eq 0 ]]; then
     cmd_outdated
-    return $?
+    return ${?}
   fi
 
-  local command="$1"
+  local command="${1}"
   shift
 
-  case "$command" in
+  case "${command}" in
     outdated)
-      cmd_outdated "$@"
+      cmd_outdated "${@}"
       ;;
     list)
-      cmd_list "$@"
+      cmd_list "${@}"
       ;;
     info)
-      cmd_info "$@"
+      cmd_info "${@}"
       ;;
     update)
-      cmd_update "$@"
+      cmd_update "${@}"
       ;;
     install)
-      cmd_install "$@"
+      cmd_install "${@}"
       ;;
     remove)
-      cmd_remove "$@"
+      cmd_remove "${@}"
       ;;
     cleanup)
-      cmd_cleanup "$@"
+      cmd_cleanup "${@}"
       ;;
     help)
       show_usage
       ;;
     *)
-      echo -e "${RED}✗${RESET} Unknown command: $command"
+      echo -e "${RED}✗${RESET} Unknown command: ${command}"
       echo
       show_usage
       return 1
@@ -234,4 +234,4 @@ main() {
   esac
 }
 
-main "$@"
+main "${@}"

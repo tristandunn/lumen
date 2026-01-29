@@ -24,30 +24,30 @@ declare -A SHORTCUTS=(
   [kitty:tab-previous]="SHIFT+CONTROL,LEFT"
 )
 
-action=$1
-param=${2:-}
+action="${1}"
+param="${2:-}"
 class=$(hyprctl activewindow -j | jq -r '.class')
 address="0x$(hyprctl activewindow | head -n 1 | awk '{print $2}')"
-shortcut="${SHORTCUTS[$class:$action]:-${SHORTCUTS[default:$action]}}"
+shortcut="${SHORTCUTS[${class}:${action}]:-${SHORTCUTS[default:${action}]}}"
 
-if [[ -z "$shortcut" ]]; then
+if [[ -z "${shortcut}" ]]; then
   exit 1
-elif [[ "$shortcut" == "killactive" ]]; then
+elif [[ "${shortcut}" == "killactive" ]]; then
   hyprctl dispatch killactive
-elif [[ "$shortcut" == "toggle-float" ]]; then
+elif [[ "${shortcut}" == "toggle-float" ]]; then
   window_info=$(hyprctl activewindow -j)
-  floating=$(echo "$window_info" | jq -r '.floating')
-  workspace=$(echo "$window_info" | jq -r '.workspace.name')
+  floating=$(echo "${window_info}" | jq -r '.floating')
+  workspace=$(echo "${window_info}" | jq -r '.workspace.name')
 
   hyprctl dispatch togglefloating
-  hyprctl dispatch movetoworkspace "$workspace"
+  hyprctl dispatch movetoworkspace "${workspace}"
 
-  if [[ "$floating" == "false" ]]; then
+  if [[ "${floating}" == "false" ]]; then
     hyprctl dispatch resizeactive exact 80% 80%
     hyprctl dispatch centerwindow
   fi
-elif [[ -n "$param" ]]; then
-  hyprctl dispatch sendshortcut "$shortcut", "$param", address:"$address"
+elif [[ -n "${param}" ]]; then
+  hyprctl dispatch sendshortcut "${shortcut}", "${param}", address:"${address}"
 else
-  hyprctl dispatch sendshortcut "$shortcut", address:"$address"
+  hyprctl dispatch sendshortcut "${shortcut}", address:"${address}"
 fi

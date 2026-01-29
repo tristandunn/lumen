@@ -2,23 +2,23 @@
 
 set -euo pipefail
 
-screenshot_dir="$HOME/Pictures/Screenshots"
-mkdir -p "$screenshot_dir"
+screenshot_dir="${HOME}/Pictures/Screenshots"
+mkdir -p "${screenshot_dir}"
 
 timestamp=$(date +%Y-%m-%d-%H%M%S)
-filepath="$screenshot_dir/screenshot-$timestamp.png"
-mode=${1:-window}
+filepath="${screenshot_dir}/screenshot-${timestamp}.png"
+mode="${1:-window}"
 
-if [[ "$mode" == "region" ]]; then
+if [[ "${mode}" == "region" ]]; then
   geometry=$(slurp) || exit 0
 
-  grim -g "$geometry" "$filepath"
-elif [[ "$mode" == "window" ]]; then
+  grim -g "${geometry}" "${filepath}"
+elif [[ "${mode}" == "window" ]]; then
   geometry=$(hyprctl activewindow -j | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
 
-  grim -g "$geometry" "$filepath"
-elif [[ "$mode" == "screen" ]]; then
-  grim "$filepath"
+  grim -g "${geometry}" "${filepath}"
+elif [[ "${mode}" == "screen" ]]; then
+  grim "${filepath}"
 fi
 
-imv "$filepath" &
+imv "${filepath}" &
