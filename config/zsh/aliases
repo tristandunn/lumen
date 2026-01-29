@@ -5,7 +5,6 @@ alias vim="nvim"
 
 # git
 alias g="git"
-alias gadd="git a"
 
 # Bundler
 alias be="bundle exec"
