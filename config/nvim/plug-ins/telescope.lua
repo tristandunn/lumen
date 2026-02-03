@@ -19,7 +19,7 @@ return {
       local config  = require("telescope.config").values
 
       pickers.new(themes.get_dropdown(), {
-        finder       = finders.new_oneshot_job({ "git", "diff", "--name-only" }),
+        finder       = finders.new_oneshot_job({ "git", "ls-files", "--modified", "--others", "--exclude-standard" }),
         prompt_title = "Unstaged Changes",
         sorter       = config.generic_sorter({})
       }):find()
