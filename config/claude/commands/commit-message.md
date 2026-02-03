@@ -4,4 +4,7 @@ allowed-tools:
   - Bash(git status)
 ---
 
-Create a single proper sentence, without emoji, for a commit message based on the staged changes.
+Write a single proper sentence, without emoji, for a commit message based on the
+staged changes listed in `git diff --staged`.
+
+DO NOT include any changes or files that are not staged.
