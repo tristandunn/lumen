@@ -1,0 +1,51 @@
+#!/bin/bash
+
+#
+# Custom status line script.
+#
+
+LIGHT_BLUE="\e[94m"
+LIGHT_GREEN="\e[92m"
+BOLD_RED="\e[1;31m"
+LIGHT_YELLOW="\e[93m"
+RESET="\e[0m"
+
+# Read JSON input from stdin.
+input=$(cat)
+
+# Extract current directory.
+cwd=$(echo "$input" | jq -r '.workspace.current_dir')
+
+# Get the branch name.
+branch=$(cd "$cwd" 2>/dev/null && git branch --show-current 2>/dev/null)
+
+# Replace the $HOME path with a tilde.
+cwd="${cwd/#$HOME/\~}"
+
+# Get context remaining percentage.
+remaining=$(echo "$input" | jq -r '.context_window.remaining_percentage // empty')
+
+# Add the directory.
+output=""
+output="${output}$(printf "${LIGHT_BLUE}%s${RESET}" "$cwd")"
+
+# Add the branch, when present.
+if [ -n "$branch" ]; then
+  output="${output} on $(printf "${LIGHT_GREEN}%s${RESET}" "$branch")"
+fi
+
+# Add the context remaining percentage when 25% or less.
+if [ -n "$remaining" ]; then
+  remaining=$(printf "%.0f" "$remaining")
+
+  if [ "$remaining" -le 25 ]; then
+    if [ "$remaining" -le 10 ]; then
+      output="${output} with $(printf "${BOLD_RED}%s%%${RESET}" "$remaining") remaining"
+    else
+      output="${output} with $(printf "${LIGHT_YELLOW}%s%%${RESET}" "$remaining") remaining"
+    fi
+  fi
+fi
+
+# Display the status line.
+echo -e "$output"

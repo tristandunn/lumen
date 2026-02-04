@@ -3,6 +3,10 @@
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
     "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
   },
+  "statusLine": {
+    "type": "command",
+    "command": "$HOME/.lumen/config/claude/scripts/status-line"
+  },
   "hooks": {
     "PostToolUse": [
       {
