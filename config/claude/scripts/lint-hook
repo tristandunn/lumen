@@ -1,0 +1,32 @@
+#!/bin/bash
+
+#
+# PostToolUse hook to auto-correct files with linters.
+#
+
+set -euo pipefail
+
+file_path=$(jq -r '.tool_input.file_path')
+
+case "$file_path" in
+  *.css)
+    if command -v yarn &>/dev/null && jq -e '.scripts["fix:css"]' package.json &>/dev/null; then
+      yarn fix:css 2>&1 || true
+    fi
+    ;;
+  *.html.erb)
+    if command -v yarn &>/dev/null && jq -e '.scripts["fix:erb"]' package.json &>/dev/null; then
+      yarn fix:erb "$file_path" 2>&1 || true
+    fi
+    ;;
+  *.js)
+    if command -v yarn &>/dev/null && jq -e '.scripts["lint"]' package.json &>/dev/null; then
+      yarn lint --fix "$file_path" 2>&1 || true
+    fi
+    ;;
+  *.rb|*Rakefile|*Gemfile)
+    if command -v rubocop &>/dev/null; then
+      rubocop -A "$file_path" 2>&1 || true
+    fi
+    ;;
+esac

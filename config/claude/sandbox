@@ -73,8 +73,8 @@ build_bwrap_args() {
   # Create the Claude Code directory.
   args+=(--dir "$CLAUDE_DIR")
 
-  # Bind commands and plugins as read-only.
-  for dir in commands plugins; do
+  # Bind commands, plugins, and scripts as read-only.
+  for dir in commands plugins scripts; do
     args+=(--ro-bind-try "$CLAUDE_DIR/$dir" "$CLAUDE_DIR/$dir")
   done
 
