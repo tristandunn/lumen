@@ -3,3 +3,6 @@ selection_wrap = true
 
 [keybinds]
 quick_activate = []
+
+[providers]
+default = ["desktopapplications", "calc"]
