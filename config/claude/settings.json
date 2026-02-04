@@ -58,5 +58,9 @@
       "Write(**/.env*)"
     ]
   },
-  "spinnerTipsEnabled": false
+  "spinnerTipsEnabled": false,
+  "spinnerVerbs": {
+    "mode": "replace",
+    "verbs": ["Working"]
+  }
 }
