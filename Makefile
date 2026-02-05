@@ -14,6 +14,7 @@ install:
 	make -C config/hyprpaper install
 	make -C config/hyprlock install
 	make -C config/iwd install
+	make -C config/tailscale install
 	make -C config/kitty install
 	make -C config/mise install
 	make -C config/nautilus install
