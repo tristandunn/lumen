@@ -11,6 +11,6 @@ link:
 	ln -sfnv $(shell pwd)/sandbox $(HOME)/.local/bin/sandbox
 
 packages:
-	sudo pacman -S --needed --noconfirm python-libseccomp
+	sudo pacman -S --needed --noconfirm bubblewrap python-libseccomp
 
 .PHONY: install packages link
