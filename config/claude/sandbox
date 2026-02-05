@@ -46,6 +46,11 @@ build_bwrap_args() {
     args+=(--ro-bind /etc/nsswitch.conf /etc/nsswitch.conf)
   fi
 
+  # Bind time zone configuration.
+  if [[ -f /etc/localtime ]]; then
+    args+=(--ro-bind /etc/localtime /etc/localtime)
+  fi
+
   # Bind SSL certificate directories.
   if [[ -d /etc/ssl ]]; then
     args+=(--ro-bind /etc/ssl /etc/ssl)
