@@ -40,6 +40,5 @@
   autoUpdate = true
 [tag]
   sort = version:refname
-[user]
-  name = Tristan Dunn
-  email = hello@tristandunn.com
+[include]
+  path = ~/.config/git/local
