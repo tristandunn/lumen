@@ -2,10 +2,13 @@
 
 set -euo pipefail
 
-if [[ "${1}" == "raise" ]]; then
+if [[ "${1:-}" == "raise" ]]; then
   output=$(sudo asdcontrol --silent /dev/usb/hiddev4 -- "+5%")
-elif [[ "${1}" == "lower" ]]; then
+elif [[ "${1:-}" == "lower" ]]; then
   output=$(sudo asdcontrol --silent /dev/usb/hiddev4 -- "-5%")
+else
+  echo "Usage: brightness-control <raise|lower>" >&2
+  exit 1
 fi
 
 brightness=$(echo "${output}" | grep -oP 'BRIGHTNESS=\K\d+')
