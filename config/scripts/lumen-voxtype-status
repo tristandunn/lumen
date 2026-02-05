@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+if command -v voxtype &>/dev/null; then
+  voxtype status --follow --extended --format json 2>/dev/null | \
+    jq --unbuffered -c '. + {alt: .class}'
+else
+  echo '{"alt": "", "tooltip": ""}'
+fi

@@ -4,7 +4,7 @@
   "height": 35,
 
   "modules-left": ["hyprland/workspaces"],
-  "modules-center": [],
+  "modules-center": ["custom/voxtype"],
   "modules-right": ["custom/bluetooth-battery", "clock"],
 
   "clock": {
@@ -17,6 +17,19 @@
     "return-type": "json",
     "interval": 600,
     "tooltip": true
+  },
+
+  "custom/voxtype": {
+    "exec-if": "command -v voxtype",
+    "exec": "lumen-voxtype-status",
+    "return-type": "json",
+    "format": "{icon}",
+    "format-icons": {
+      "idle": "",
+      "recording": "●",
+      "transcribing": "●"
+    },
+    "tooltip": false
   },
 
   "hyprland/workspaces": {

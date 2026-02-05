@@ -1,0 +1,23 @@
+# See https://github.com/peteonrails/voxtype/blob/main/docs/CONFIGURATION.md
+# for details.
+
+state_file = "auto"
+
+[audio]
+device = "default"
+max_duration_secs = 60
+sample_rate = 16000
+
+[hotkey]
+enabled = false
+
+[output]
+mode = "type"
+pre_output_command = "hyprctl dispatch submap voxtype_suppress"
+post_output_command = "hyprctl dispatch submap reset && wtype -k Return"
+
+[output.notification]
+on_transcription = false
+
+[whisper]
+model = "small.en"

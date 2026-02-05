@@ -25,6 +25,7 @@ install:
 	make -C config/steam install
 	make -C config/swayosd install
 	make -C config/sysctl install
+	make -C config/voxtype install
 	make -C config/walker install
 	make -C config/waybar install
 	make -C config/scripts install

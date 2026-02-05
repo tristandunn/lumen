@@ -8,6 +8,16 @@
   min-height: 0;
 }
 
+tooltip {
+  background: #333;
+  border-radius: 4px;
+}
+
+tooltip label {
+  color: #FFF;
+  font-size: 14px;
+}
+
 #waybar {
   background: #DADADA;
 }
@@ -38,6 +48,20 @@
   padding: 0 2px;
 }
 
+#custom-voxtype {
+  font-size: 24px;
+  min-width: 12px;
+  margin: 0 0 0 8px;
+}
+
+#custom-voxtype.recording {
+  color: #cc4444;
+}
+
+#custom-voxtype.transcribing {
+  color: #7744aa;
+}
+
 #workspaces button {
   all: initial;
   font-family: "Monaspace Neon Var", monospace;
@@ -59,14 +83,4 @@
 
 #workspaces button:hover {
   color: #000;
-}
-
-tooltip {
-  background: #333;
-  border-radius: 4px;
-}
-
-tooltip label {
-  color: #FFF;
-  font-size: 14px;
 }
