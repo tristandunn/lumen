@@ -1,4 +1,4 @@
-install: link local
+install: link local packages
 
 link:
 	ln -sfnv $(shell pwd)/config $(HOME)/.gitconfig
@@ -8,4 +8,7 @@ link:
 local:
 	@test -f $(HOME)/.config/git/local || cp $(shell pwd)/local.template $(HOME)/.config/git/local
 
-.PHONY: install link local
+packages:
+	sudo pacman -S --needed --noconfirm github-cli
+
+.PHONY: install link local packages
