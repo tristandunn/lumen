@@ -70,6 +70,7 @@ build_bwrap_args() {
 
   # Bind git configuration.
   args+=(--ro-bind-try "$HOME/.gitconfig" "$HOME/.gitconfig")
+  args+=(--ro-bind-try "$HOME/.config/git/local" "$HOME/.config/git/local")
 
   # Bind alias and zsh configuration.
   args+=(--ro-bind-try "$HOME/.aliases" "$HOME/.aliases")
