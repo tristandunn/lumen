@@ -2,35 +2,44 @@
 
 set -euo pipefail
 
-current_sink=$(audio-sink current)
-new_sink=$(audio-sink alsa)
+# Exclude PCI controllers and sinks with all ports unavailable.
+available_sinks=$(
+  pactl -f json list sinks | jq -r '
+    [.[] | select(.name | test("^alsa_output\\.pci") | not)
+          | select(.ports == [] or (.ports | any(.availability != "not available")))]
+    | .[].name
+  '
+)
 
-# Toggle to Bluetooth if currently on ALSA.
-if [[ "$current_sink" != bluez_output* ]]; then
-  bluetooth_sink=$(audio-sink bluetooth)
-
-  if [[ -z "$bluetooth_sink" ]]; then
-    bluetooth-reconnect || true
-    bluetooth_sink=$(audio-sink bluetooth)
-  fi
-
-  if [[ -n "$bluetooth_sink" ]]; then
-    new_sink="$bluetooth_sink"
-  fi
+if [[ -z "$available_sinks" ]]; then
+  echo "No available sinks found." >&2
+  exit 1
 fi
 
-# Switch to the new sink and move all active audio streams.
+# Find the current default sink and cycle to the next available.
+current_sink=$(pactl get-default-sink)
+new_sink=$(
+  echo "$available_sinks" | awk -v current="$current_sink" '
+    NR == 1 { first = $0 }
+    prev { print; done = 1; exit }
+    $0 == current { prev = 1 }
+    END { if (!done) print first }
+  '
+)
+
+# Switch to the sink and move all active streams.
 pactl set-default-sink "$new_sink"
 pactl list short sink-inputs | awk '{print $1}' | while read -r stream_id; do
   pactl move-sink-input "$stream_id" "$new_sink" 2>/dev/null || true
 done
 
-# Alert on which sink is now active.
+# Display headphones symbol for Bluetooth.
 if [[ "$new_sink" == bluez_output* ]]; then
   icon="audio-headphones-symbolic"
 else
   icon="audio-speakers-symbolic"
 fi
 
+# Alert on which sink is now active.
 swayosd-client --custom-icon "$icon" \
   --custom-message "$(audio-sink description "$new_sink")"
