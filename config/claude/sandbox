@@ -33,6 +33,8 @@ build_bwrap_args() {
   args+=(--tmpfs /var)
   args+=(--tmpfs /run)
   args+=(--tmpfs "$HOME")
+  args+=(--symlink /run /var/run)
+  args+=(--symlink /tmp /var/tmp)
 
   # Share the network namespace and bind DNS configuration.
   args+=(--share-net)
