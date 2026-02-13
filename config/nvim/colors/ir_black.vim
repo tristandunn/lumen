@@ -154,8 +154,6 @@ highlight SignColumn     guibg=black gui=NONE ctermfg=NONE   ctermbg=NONE cterm=
 " Floating Windows
 " =============================================================================
 
-hi! link NormalFloat Normal
-
 hi NormalFloat guibg=#151515 guifg=#f6f3e8
 hi FloatBorder guifg=#7C7C7C guibg=black
 hi FloatTitle  guifg=#FFD2A7 guibg=black   gui=bold
