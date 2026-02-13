@@ -42,4 +42,4 @@ fi
 
 # Alert on which sink is now active.
 swayosd-client --custom-icon "$icon" \
-  --custom-message "$(audio-sink description "$new_sink")"
+  --custom-message "$(lumen-audio-sink description "$new_sink")"

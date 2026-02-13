@@ -7,7 +7,7 @@ if [[ "${1:-}" == "raise" ]]; then
 elif [[ "${1:-}" == "lower" ]]; then
   output=$(sudo asdcontrol --silent /dev/usb/hiddev4 -- "-5%")
 else
-  echo "Usage: brightness-control <raise|lower>" >&2
+  echo "Usage: lumen-brightness-control <raise|lower>" >&2
   exit 1
 fi
 

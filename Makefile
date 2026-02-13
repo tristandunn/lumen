@@ -25,6 +25,7 @@ install:
 	make -C config/sysctl install
 	make -C config/walker install
 	make -C config/waybar install
+	make -C config/scripts install
 	make -C config/zsh install
 	make -C config/mise install
 

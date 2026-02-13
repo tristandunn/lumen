@@ -13,7 +13,7 @@ case "${1:-}" in
     ' | sed 's/ Analog Stereo//'
     ;;
   *)
-    echo "Usage: audio-sink <current|description> [sink]" >&2
+    echo "Usage: lumen-audio-sink <current|description> [sink]" >&2
     exit 1
     ;;
 esac
