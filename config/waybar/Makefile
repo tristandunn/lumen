@@ -5,7 +5,7 @@ packages:
 
 link:
 	mkdir -p $(HOME)/.config/waybar
-	ln -sf $(CURDIR)/config.jsonc $(HOME)/.config/waybar/config.jsonc
-	ln -sf $(CURDIR)/style.css $(HOME)/.config/waybar/style.css
+	ln -sfnv $(shell pwd)/config.jsonc $(HOME)/.config/waybar/config.jsonc
+	ln -sfnv $(shell pwd)/style.css $(HOME)/.config/waybar/style.css
 
 .PHONY: install packages link
