@@ -1,4 +1,5 @@
 link:
+	mkdir -p $(HOME)/.local/bin
 	ln -sfnv $(shell pwd)/steam-run $(HOME)/.local/bin/steam-run
 
 packages:
