@@ -113,6 +113,11 @@ build_bwrap_args() {
     args+=(--ro-bind "$HOME/.lumen" "$HOME/.lumen")
   fi
 
+  # Bind additional read-only directories.
+  if [[ "$CURRENT_DIR" == "$HOME/Sites/"* ]]; then
+    args+=(--ro-bind-try "$HOME/Sites" "$HOME/Sites")
+  fi
+
   # Bind and switch to the current working directory.
   args+=(--bind "$CURRENT_DIR" "$CURRENT_DIR")
   args+=(--chdir "$CURRENT_DIR")
