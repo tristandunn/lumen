@@ -1,4 +1,4 @@
-install: packages link
+install: packages link service
 
 link:
 	mkdir -p $(HOME)/.config/pipewire/pipewire.conf.d
@@ -9,6 +9,9 @@ link:
 		$(HOME)/.config/wireplumber/wireplumber.conf.d/50-bluetooth-codecs.conf
 
 packages:
-	sudo pacman -S --needed --noconfirm libldac
+	sudo pacman -S --needed --noconfirm libldac pipewire-pulse
 
-.PHONY: install link packages
+service:
+	systemctl --user enable --now pipewire-pulse
+
+.PHONY: install link packages service

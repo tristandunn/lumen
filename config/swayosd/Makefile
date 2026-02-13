@@ -1,9 +1,6 @@
-install: packages service
+install: packages
 
 packages:
-	sudo pacman -S --needed --noconfirm pipewire-pulse swayosd
+	sudo pacman -S --needed --noconfirm swayosd
 
-service:
-	systemctl --user enable --now pipewire-pulse
-
-.PHONY: install packages service
+.PHONY: install packages
