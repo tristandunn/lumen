@@ -20,6 +20,10 @@
   margin-right: 14px;
 }
 
+#custom-mouse-battery {
+  color: #555555;
+}
+
 #clock {
   margin: 0 8px;
   color: #000000;

@@ -5,10 +5,16 @@
 
   "modules-left": ["hyprland/workspaces"],
   "modules-center": [],
-  "modules-right": ["clock"],
+  "modules-right": ["custom/mouse-battery", "clock"],
 
   "clock": {
     "format": "{:%I:%M %p}",
+    "tooltip": false
+  },
+
+  "custom/mouse-battery": {
+    "exec": "lumen-mouse-battery",
+    "interval": 60,
     "tooltip": false
   },
 

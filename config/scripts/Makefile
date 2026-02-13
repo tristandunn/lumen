@@ -7,6 +7,7 @@ link:
 	ln -sfnv $(shell pwd)/lumen-bluetooth-reconnect $(HOME)/.local/bin/lumen-bluetooth-reconnect
 	ln -sfnv $(shell pwd)/lumen-brightness-control $(HOME)/.local/bin/lumen-brightness-control
 	ln -sfnv $(shell pwd)/lumen-hypr-dispatch $(HOME)/.local/bin/lumen-hypr-dispatch
+	ln -sfnv $(shell pwd)/lumen-mouse-battery $(HOME)/.local/bin/lumen-mouse-battery
 	ln -sfnv $(shell pwd)/lumen-screenshot $(HOME)/.local/bin/lumen-screenshot
 	ln -sfnv $(shell pwd)/lumen-waybar-reload $(HOME)/.local/bin/lumen-waybar-reload
 	ln -sfnv $(shell pwd)/pkg $(HOME)/.local/bin/pkg
