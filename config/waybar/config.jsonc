@@ -7,14 +7,14 @@
   "modules-center": [],
   "modules-right": ["clock"],
 
+  "clock": {
+    "format": "{:%I:%M %p}",
+    "tooltip": false
+  },
+
   "hyprland/workspaces": {
     "format": "{name}",
     "on-click": "activate",
     "sort-by-number": true
-  },
-
-  "clock": {
-    "format": "{:%I:%M %p}",
-    "tooltip": false
   }
 }
