@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 #
 # Sandbox wrapper for Claude Code using bubblewrap.
