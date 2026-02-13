@@ -23,7 +23,7 @@ autocmd(
       local previous_cursor = vim.fn.getpos(".")
 
       -- Strip trailing spaces from the buffer.
-      vim.cmd([[%s/\s\+$//e]])
+      vim.cmd([[keeppatterns %s/\s\+$//e]])
 
       -- Restore the previous cursor position.
       vim.fn.setpos(".", previous_cursor)
