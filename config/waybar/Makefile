@@ -1,7 +1,7 @@
 install: packages link
 
 packages:
-	sudo pacman -S --needed --noconfirm waybar
+	sudo pacman -S --needed --noconfirm waybar ttf-nerd-fonts-symbols
 
 link:
 	mkdir -p $(HOME)/.config/waybar

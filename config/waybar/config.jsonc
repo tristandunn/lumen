@@ -5,17 +5,18 @@
 
   "modules-left": ["hyprland/workspaces"],
   "modules-center": [],
-  "modules-right": ["custom/mouse-battery", "clock"],
+  "modules-right": ["custom/bluetooth-battery", "clock"],
 
   "clock": {
     "format": "{:%I:%M %p}",
     "tooltip": false
   },
 
-  "custom/mouse-battery": {
-    "exec": "lumen-mouse-battery",
-    "interval": 60,
-    "tooltip": false
+  "custom/bluetooth-battery": {
+    "exec": "lumen-bluetooth-battery",
+    "return-type": "json",
+    "interval": 600,
+    "tooltip": true
   },
 
   "hyprland/workspaces": {

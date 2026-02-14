@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+has_low=0
+tooltip=""
+
+for device in $(upower -e); do
+  info=$(upower -i "${device}")
+  name=$(echo "${info}" | awk '/model:/ { sub(/^[^:]*:[[:space:]]*/, ""); print }')
+  percentage=$(echo "${info}" | awk '/percentage:/ { print $2 }')
+
+  if [[ -z "${name}" || -z "${percentage}" ]]; then
+    continue
+  fi
+
+  value=${percentage%\%}
+
+  if [[ -n "${tooltip}" ]]; then
+    tooltip="${tooltip}\n"
+  fi
+
+  tooltip="${tooltip}${percentage} - ${name}"
+
+  if [[ "${value}" -le 20 ]]; then
+    has_low=1
+  fi
+done
+
+if [[ -z "${tooltip}" ]]; then
+  echo '{}'
+  exit
+fi
+
+if [[ "${has_low}" -eq 1 ]]; then
+  icon=$(printf '\uf293')
+  class="low"
+else
+  icon=$(printf '\U000f00af')
+  class=""
+fi
+
+printf '{"text": "%s", "tooltip": "<span line_height='"'"'1.4'"'"'>%s</span>", "class": "%s"}\n' "${icon}" "${tooltip}" "${class}"
