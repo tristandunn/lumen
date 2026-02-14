@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+STATE_FILE="/run/user/$(id -u)/voxtype/state"
+OUTPUT_FILE="/tmp/voxtype-ask-output.txt"
+MODEL="$HOME/.local/share/piper/en_US-amy-medium.onnx"
+SYSTEM_PROMPT="
+You are a local, helpful voice assistant.
+
+- Be direct and concise.
+- Respond in one or two short sentences
+- Do not include links, markdown, or special formatting in the response.
+- Only search if absolutely required, or asked.
+"
+
+# Wait for voxtype to finish transcribing.
+wait_for_idle() {
+  while [[ "$(cat "$STATE_FILE" 2>/dev/null)" != "idle" ]]; do
+    sleep 0.1
+  done
+}
+
+case "${1:-}" in
+  start)
+    rm -f "$OUTPUT_FILE"
+    voxtype record start --file="$OUTPUT_FILE"
+    ;;
+  stop)
+    voxtype record stop
+    wait_for_idle
+
+    PROMPT=$(cat "$OUTPUT_FILE" 2>/dev/null || true)
+    rm -f "$OUTPUT_FILE"
+
+    if [[ -z "$PROMPT" ]]; then
+      exit 0
+    fi
+
+    sandbox --system-prompt "$SYSTEM_PROMPT" -p "$PROMPT" \
+      | piper-tts --model "$MODEL" --output_raw \
+      | pw-cat --playback --raw --rate 22050 --channels 1 --format s16 -
+    ;;
+  *)
+    echo "Usage: lumen-voxtype-ask [start|stop]" >&2
+    exit 1
+    ;;
+esac

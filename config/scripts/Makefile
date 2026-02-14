@@ -9,6 +9,7 @@ link:
 	ln -sfnv $(shell pwd)/lumen-hypr-dispatch $(HOME)/.local/bin/lumen-hypr-dispatch
 	ln -sfnv $(shell pwd)/lumen-bluetooth-battery $(HOME)/.local/bin/lumen-bluetooth-battery
 	ln -sfnv $(shell pwd)/lumen-screenshot $(HOME)/.local/bin/lumen-screenshot
+	ln -sfnv $(shell pwd)/lumen-voxtype-ask $(HOME)/.local/bin/lumen-voxtype-ask
 	ln -sfnv $(shell pwd)/lumen-voxtype-status $(HOME)/.local/bin/lumen-voxtype-status
 	ln -sfnv $(shell pwd)/lumen-waybar-reload $(HOME)/.local/bin/lumen-waybar-reload
 	ln -sfnv $(shell pwd)/pkg $(HOME)/.local/bin/pkg
