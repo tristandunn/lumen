@@ -30,11 +30,24 @@ set("n", "<Leader>8", "<Cmd>tabn 8<CR>")
 set("n", "<Leader>9", "<Cmd>tabn 9<CR>")
 set("n", "<Leader>0", "<Cmd>tablast<CR>")
 
--- Opens an edit command with the path of the currently edited file filled in.
-set("n", "<Leader>e", ":e +9 <C-R>=escape(expand(\"%:p:h\") . \"/\", \" \") <CR>")
+-- Get the directory of the current file, or the netrw browsing directory.
+local function current_directory()
+  if vim.bo.filetype == "netrw" then
+    return vim.b.netrw_curdir .. "/"
+  else
+    return vim.fn.expand("%:p:h") .. "/"
+  end
+end
 
--- Opens a tab edit command with the path of the currently edited file filled in.
-set("n", "<Leader>te", ":tabe +9 <C-R>=escape(expand(\"%:p:h\") . \"/\", \" \") <CR>")
+-- Opens an edit command with the current directory filled in.
+set("n", "<Leader>e", function()
+  return ":e +9 " .. vim.fn.escape(current_directory(), " ")
+end, { expr = true })
+
+-- Opens a tab edit command with the current directory filled in.
+set("n", "<Leader>te", function()
+  return ":tabe +9 " .. vim.fn.escape(current_directory(), " ")
+end, { expr = true })
 
 -- Shortcuts for Super+S forwarding support.
 set("n", "<C-S>", "<Cmd>update<CR>")
