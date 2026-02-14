@@ -83,6 +83,8 @@ hl.bind("SUPER + T", hl.dsp.exec_cmd("lumen-hypr-dispatch tab-new"))
 hl.bind("SUPER + SHIFT + S", hl.dsp.exec_cmd("$HOME/.local/bin/steam-run"))
 
 -- Voxtype.
+hl.bind("SUPER + N", hl.dsp.exec_cmd("lumen-voxtype-ask start"))
+hl.bind("SUPER + N", hl.dsp.exec_cmd("lumen-voxtype-ask stop"), { release = true })
 hl.bind("SUPER + D", hl.dsp.exec_cmd("voxtype record start"))
 hl.bind("SUPER + D", hl.dsp.exec_cmd("voxtype record stop"), { release = true })
 -- }}}
