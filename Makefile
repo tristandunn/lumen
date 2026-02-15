@@ -20,6 +20,7 @@ install:
 	make -C config/nvim install
 	make -C config/openssh install
 	make -C config/ripgrep install
+	make -C config/samba install
 	make -C config/tmux install
 	make -C config/sddm install
 	make -C config/steam install
