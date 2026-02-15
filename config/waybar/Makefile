@@ -2,6 +2,7 @@ install: packages link
 
 packages:
 	sudo pacman -S --needed --noconfirm waybar ttf-nerd-fonts-symbols
+	yay -S --needed --noconfirm bluetui
 
 link:
 	mkdir -p $(HOME)/.config/waybar

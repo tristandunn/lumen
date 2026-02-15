@@ -16,6 +16,7 @@
     "exec": "lumen-bluetooth-battery",
     "return-type": "json",
     "interval": 600,
+    "on-click": "kitty bluetui",
     "tooltip": true
   },
 
