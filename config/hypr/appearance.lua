@@ -21,6 +21,9 @@ hl.config({
     --   1 -> Always split to the left.  (new = left or top)
     --   2 -> Always split to the right. (new = right or bottom)
     force_split = 2,
+
+    -- Preserve the split direction so togglesplit can change it.
+    preserve_split = true,
   },
 
   master = {
