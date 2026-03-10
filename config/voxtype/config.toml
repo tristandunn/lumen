@@ -14,7 +14,8 @@ enabled = false
 [output]
 mode = "type"
 pre_output_command = "hyprctl dispatch submap voxtype_suppress"
-post_output_command = "hyprctl dispatch submap reset && wtype -k Return"
+post_output_command = "hyprctl dispatch submap reset"
+auto_submit = true
 
 [output.notification]
 on_transcription = false
