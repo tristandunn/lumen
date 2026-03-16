@@ -3,6 +3,7 @@ install:
 	make -C config/pacman install
 	make -C config/pipewire install
 	make -C config/bluetooth install
+	make -C config/fwupd install
 	make -C config/keyd install
 	make -C config/hypr install
 	make -C config/elephant install

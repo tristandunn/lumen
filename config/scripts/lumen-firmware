@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+case "${1:-}" in
+  update)
+    fwupdmgr refresh --force
+    fwupdmgr update
+    ;;
+  --help)
+    cat << EOF
+Usage: lumen-firmware [command]
+
+Manage firmware updates via fwupd.
+
+Commands:
+  update    Refresh metadata and install available updates.
+  --help    Show this help message.
+
+Examples:
+  lumen-firmware          # Check for available firmware updates.
+  lumen-firmware update   # Install firmware updates.
+
+EOF
+    ;;
+  "")
+    fwupdmgr refresh --force
+    fwupdmgr get-updates
+    ;;
+  *)
+    echo "Usage: lumen-firmware [update|--help]" >&2
+    exit 1
+    ;;
+esac

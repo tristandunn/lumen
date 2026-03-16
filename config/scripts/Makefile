@@ -10,6 +10,7 @@ link:
 	ln -sfnv $(shell pwd)/lumen-bluetooth-battery $(HOME)/.local/bin/lumen-bluetooth-battery
 	ln -sfnv $(shell pwd)/lumen-screenshot $(HOME)/.local/bin/lumen-screenshot
 	ln -sfnv $(shell pwd)/lumen-voxtype-status $(HOME)/.local/bin/lumen-voxtype-status
+	ln -sfnv $(shell pwd)/lumen-firmware $(HOME)/.local/bin/lumen-firmware
 	ln -sfnv $(shell pwd)/lumen-waybar-reload $(HOME)/.local/bin/lumen-waybar-reload
 	ln -sfnv $(shell pwd)/pkg $(HOME)/.local/bin/pkg
 
