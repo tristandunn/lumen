@@ -1,8 +1,11 @@
 {
-  "skipDangerousModePermissionPrompt": true,
+  "enabledPlugins": {
+    "ruby-lsp@claude-plugins-official": true
+  },
   "env": {
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
-    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+    "ENABLE_LSP_TOOL": "1"
   },
   "hooks": {
     "PostToolUse": [
@@ -55,9 +58,12 @@
       "Write(**/.env*)"
     ]
   },
+  "skipDangerousModePermissionPrompt": true,
   "spinnerTipsEnabled": false,
   "spinnerVerbs": {
     "mode": "replace",
-    "verbs": ["Working"]
+    "verbs": [
+      "Working"
+    ]
   }
 }
