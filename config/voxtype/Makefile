@@ -5,7 +5,7 @@ link:
 	ln -sfnv $(shell pwd)/config.toml $(HOME)/.config/voxtype/config.toml
 
 packages:
-	yay -S --needed --noconfirm wtype voxtype
+	yay -S --needed --noconfirm wtype voxtype-bin
 
 service:
 	systemctl --user enable --now voxtype.service
