@@ -21,4 +21,4 @@ auto_submit = true
 on_transcription = false
 
 [whisper]
-model = "small.en"
+model = "large-v3-turbo"
