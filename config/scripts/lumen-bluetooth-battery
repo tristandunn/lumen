@@ -10,6 +10,11 @@ for device in $(upower -e); do
   name=$(echo "${info}" | awk '/model:/ { sub(/^[^:]*:[[:space:]]*/, ""); print }')
   percentage=$(echo "${info}" | awk '/percentage:/ { print $2 }')
 
+  # Skip keyboards due to Apple Magic Keyboard reporting 4% all the time.
+  if [[ "${name}" == *"Keyboard"* ]]; then
+    continue
+  fi
+
   if [[ -z "${name}" || -z "${percentage}" ]]; then
     continue
   fi
