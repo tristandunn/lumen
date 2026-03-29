@@ -98,7 +98,7 @@ build_bwrap_args() {
   args+=(--bind-try "$CLAUDE_DIR/.credentials.json" "$CLAUDE_DIR/.credentials.json")
 
   # Bind project-specific writable directories.
-  for dir in projects todos plans session-env debug shell-snapshots; do
+  for dir in debug plans projects session-env shell-snapshots tasks todos; do
     args+=(--bind "$SANDBOX_DATA_DIR/$dir" "$CLAUDE_DIR/$dir")
   done
 
@@ -169,7 +169,7 @@ build_bwrap_args() {
 }
 
 create_sandbox_storage() {
-  local dirs=(projects todos plans session-env debug shell-snapshots)
+  local dirs=(debug plans projects session-env shell-snapshots tasks todos)
 
   for dir in "${dirs[@]}"; do
     mkdir -p "$SANDBOX_DATA_DIR/$dir"
