@@ -1,15 +1,3 @@
--- Add default border and maximum dimensions to floating previews.
-local open_floating_preview = vim.lsp.util.open_floating_preview
-
-function vim.lsp.util.open_floating_preview(contents, syntax, options, ...)
-  options            = options or {}
-  options.border     = options.border or "rounded"
-  options.max_height = options.max_height or 24
-  options.max_width  = options.max_width or 110
-
-  return open_floating_preview(contents, syntax, options, ...)
-end
-
 -- Add additional shortcuts for LSP commands.
 vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(event)

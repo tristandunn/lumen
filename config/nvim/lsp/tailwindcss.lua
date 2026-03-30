@@ -6,17 +6,7 @@ return {
   settings     = {
     tailwindCSS = {
       classAttributes  = { "class", "className" },
-      includeLanguages = { eruby = "erb" },
-      validate         = true,
-      lint             = {
-        cssConflict              = "warning",
-        invalidApply             = "error",
-        invalidConfigPath        = "error",
-        invalidScreen            = "error",
-        invalidTailwindDirective = "error",
-        invalidVariant           = "error",
-        recommendedVariantOrder  = "warning",
-      }
+      includeLanguages = { eruby = "erb" }
     }
   }
 }

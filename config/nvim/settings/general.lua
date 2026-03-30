@@ -11,10 +11,11 @@ global.loaded_python3_provider = 0
 global.loaded_ruby_provider    = 0
 
 
-option.exrc        = true  -- Enable local .nvim.lua files.
-option.mouse       = "a"   -- Enable mouse support in all modes.
-option.swapfile    = false -- No swap files.
-option.writebackup = false -- Don't write backup files.
+option.exrc        = true      -- Enable local .nvim.lua files.
+option.mouse       = "a"       -- Enable mouse support in all modes.
+option.swapfile    = false     -- No swap files.
+option.winborder   = "rounded" -- Add rounded borders to floating windows.
+option.writebackup = false     -- Don't write backup files.
 
 
 -- Case only matters with mixed case expressions.
