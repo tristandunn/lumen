@@ -5,6 +5,7 @@ return {
   root_markers = { "eslint.config.js" },
   settings     = {
     codeActionsOnSave   = { enable = false, mode = "all" }, -- Don't enable code actions on save.
+    experimental        = { useFlatConfig = true },         -- Use flat config (eslint.config.js).
     format              = true,                             -- Enable formatting.
     nodePath            = "",                               -- Must be a string.
     problems            = { shortenToSingleLine = false },  -- Don't shorten problems.
