@@ -3,11 +3,25 @@
 set -euo pipefail
 
 if [[ "${1:-}" == "raise" ]]; then
-  output=$(sudo asdcontrol --silent /dev/usb/hiddev4 -- "+5%")
+  arg="+5%"
 elif [[ "${1:-}" == "lower" ]]; then
-  output=$(sudo asdcontrol --silent /dev/usb/hiddev4 -- "-5%")
+  arg="-5%"
 else
   echo "Usage: lumen-brightness-control <raise|lower>" >&2
+  exit 1
+fi
+
+output=""
+for device in /dev/usb/hiddev*; do
+  result=$(sudo asdcontrol --silent "${device}" -- "${arg}" 2>&1) || true
+  if [[ "${result}" == *"BRIGHTNESS"* ]]; then
+    output="${result}"
+    break
+  fi
+done
+
+if [[ -z "${output}" ]]; then
+  echo "No USB monitor found." >&2
   exit 1
 fi
 
