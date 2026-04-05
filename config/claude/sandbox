@@ -125,6 +125,17 @@ build_bwrap_args() {
   args+=(--bind "$CURRENT_DIR" "$CURRENT_DIR")
   args+=(--chdir "$CURRENT_DIR")
 
+  # Bind the git common directory if it differs from the current directory,
+  # such as when operating inside a worktree.
+  local git_common_dir
+  if git_common_dir="$(git -C "$CURRENT_DIR" rev-parse --git-common-dir 2>/dev/null)"; then
+    git_common_dir="$(cd "$CURRENT_DIR" && realpath "$git_common_dir/..")"
+
+    if [[ "$git_common_dir" != "$CURRENT_DIR" ]]; then
+      args+=(--bind "$git_common_dir" "$git_common_dir")
+    fi
+  fi
+
   # Bind mise runtime version manager directories.
   args+=(--setenv MISE_DATA_DIR "$MISE_DATA_DIR")
   args+=(--setenv MISE_CACHE_DIR "$MISE_CACHE_DIR")
