@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+echo "Inhibiting idle and sleep..."
+systemd-inhibit --what=idle:sleep \
+                --who="lumen-caffeinate" \
+                --why="Keeping the system awake." \
+                sleep infinity
