@@ -19,3 +19,6 @@ export PATH="$PATH:$CARGO_HOME/bin"
 
 # Disable statistics from Selenium Manager.
 export SE_AVOID_STATS=true
+
+# Use the sandbox for the grove agent.
+export GROVE_AGENT="sandbox"
