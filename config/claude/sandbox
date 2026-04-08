@@ -154,7 +154,7 @@ build_bwrap_args() {
 
   # Bind the Selenium directory.
   if [[ -d "$HOME/.cache/selenium" ]]; then
-    args+=(--ro-bind "$HOME/.cache/selenium" "$HOME/.cache/selenium")
+    args+=(--bind "$HOME/.cache/selenium" "$HOME/.cache/selenium")
   fi
 
   # Isolate all namespaces except network.
