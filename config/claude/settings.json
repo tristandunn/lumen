@@ -1,23 +1,7 @@
 {
-  "enabledPlugins": {
-    "ruby-lsp@claude-plugins-official": true
-  },
   "env": {
     "CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY": "1",
     "ENABLE_LSP_TOOL": "1"
-  },
-  "hooks": {
-    "PostToolUse": [
-      {
-        "matcher": "Edit|MultiEdit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$HOME/.claude/scripts/lint-hook"
-          }
-        ]
-      }
-    ]
   },
   "permissions": {
     "allow": [
@@ -57,12 +41,28 @@
       "Write(**/.env*)"
     ]
   },
-  "skipDangerousModePermissionPrompt": true,
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|MultiEdit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/scripts/lint-hook"
+          }
+        ]
+      }
+    ]
+  },
+  "enabledPlugins": {
+    "ruby-lsp@claude-plugins-official": true
+  },
   "spinnerTipsEnabled": false,
   "spinnerVerbs": {
     "mode": "replace",
     "verbs": [
       "Working"
     ]
-  }
+  },
+  "skipDangerousModePermissionPrompt": true
 }
