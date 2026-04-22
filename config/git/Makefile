@@ -1,4 +1,7 @@
-install: link local packages
+install: link local packages configure
+
+configure:
+	gh config set telemetry disabled
 
 link:
 	mkdir -p $(HOME)/.config/git
@@ -12,4 +15,4 @@ local:
 packages:
 	sudo pacman -S --needed --noconfirm github-cli
 
-.PHONY: install link local packages
+.PHONY: install link local packages configure
