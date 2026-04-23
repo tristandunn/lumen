@@ -218,6 +218,13 @@ ln -sf /usr/share/zoneinfo/America/New_York /etc/localtime
 hwclock --systohc
 ```
 
+Enable network time synchronization so the system clock stays accurate via
+`systemd-timesyncd`.
+
+```sh
+timedatectl set-ntp true
+```
+
 ## Set a Localization
 
 Configure the system language and regional settings, which determine how dates,
