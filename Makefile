@@ -14,6 +14,7 @@ install:
 	make -C config/hypridle install
 	make -C config/hyprpaper install
 	make -C config/hyprlock install
+	make -C config/systemd-resolved install
 	make -C config/iwd install
 	make -C config/kitty install
 	make -C config/mise install
