@@ -36,6 +36,17 @@ build_bwrap_args() {
   args+=(--symlink /run /var/run)
   args+=(--symlink /tmp /var/tmp)
 
+  # Bind the Wayland socket so clipboard tools (wl-copy, wl-paste) work.
+  if [[ -n "${WAYLAND_DISPLAY:-}" && -n "${XDG_RUNTIME_DIR:-}" ]]; then
+    local wayland_socket="$XDG_RUNTIME_DIR/$WAYLAND_DISPLAY"
+    if [[ -S "$wayland_socket" ]]; then
+      args+=(--dir "$XDG_RUNTIME_DIR")
+      args+=(--ro-bind "$wayland_socket" "$wayland_socket")
+      args+=(--setenv XDG_RUNTIME_DIR "$XDG_RUNTIME_DIR")
+      args+=(--setenv WAYLAND_DISPLAY "$WAYLAND_DISPLAY")
+    fi
+  fi
+
   # Share the network namespace and bind DNS configuration.
   args+=(--share-net)
   args+=(--ro-bind /etc/resolv.conf /etc/resolv.conf)
