@@ -4,7 +4,8 @@ build:
 	mise install
 
 link:
-	ln -sfnv $(shell pwd)/tool-versions $(HOME)/.tool-versions
+	mkdir -p $(HOME)/.config/mise
+	ln -sfnv $(shell pwd)/config.toml $(HOME)/.config/mise/config.toml
 	ln -sfnv $(shell pwd)/gemrc $(HOME)/.gemrc
 
 packages:
