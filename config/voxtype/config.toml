@@ -11,6 +11,9 @@ sample_rate = 16000
 [hotkey]
 enabled = false
 
+[osd]
+enabled = false
+
 [output]
 mode = "type"
 pre_output_command = "hyprctl dispatch submap voxtype_suppress"
