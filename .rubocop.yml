@@ -1,0 +1,61 @@
+AllCops:
+  CacheRootDirectory: "/tmp/cache"
+  NewCops: enable
+  StringLiteralsFrozenByDefault: true
+
+Layout/HashAlignment:
+  EnforcedColonStyle: table
+  EnforcedHashRocketStyle: table
+
+Metrics/BlockLength:
+  Enabled: true
+  Exclude:
+    - config/environments/*.rb
+
+Metrics/MethodLength:
+  Enabled: true
+  Exclude:
+    - db/migrate/*
+
+Naming/RescuedExceptionsVariableName:
+  Enabled: true
+  PreferredName: error
+
+Style/Documentation:
+  Enabled: false
+
+Style/DocumentationMethod:
+  Enabled: true
+  Exclude:
+    - "db/**/*"
+    - "spec/**/*"
+  RequireForNonPublicMethods: true
+
+Style/ExpandPathArguments:
+  Enabled: true
+  Exclude:
+    - bin/*
+
+Style/HashSyntax:
+  Enabled: true
+  EnforcedShorthandSyntax: never
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/GuardClause:
+  Enabled: false
+
+Style/PercentLiteralDelimiters:
+  PreferredDelimiters:
+    "%i": "()"
+    "%w": "()"
+
+Style/RaiseArgs:
+  EnforcedStyle: compact
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Style/StringLiteralsInInterpolation:
+  EnforcedStyle: double_quotes

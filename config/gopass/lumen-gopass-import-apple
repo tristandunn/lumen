@@ -1,0 +1,204 @@
+#!/usr/bin/env ruby
+
+# frozen_string_literal: true
+
+# Import a CSV exported from Apple Passwords into gopass.
+#
+# Apple Passwords exports a CSV with these columns:
+#   Title, URL, Username, Password, Notes, OTPAuth
+#
+# Each row becomes a gopass secret under a configurable prefix, with the
+# path derived from the title (or URL host) and username. When the OTPAuth
+# column is populated, the otpauth URL is stored alongside so that
+# `gopass otp <path>` can generate codes.
+
+require "active_support/core_ext/object/blank"
+require "csv"
+require "open3"
+require "optparse"
+require "uri"
+
+FIELDS = [
+  ["URL",      ->(value) { "url: #{value}" }],
+  ["Username", ->(value) { "user: #{value}" }],
+  ["OTPAuth",  ->(value) { value }],
+  ["Notes",    ->(value) { "\n#{value}" }]
+].freeze
+
+InsertResult = Data.define(:status, :stderr)
+
+# Renders a row as gopass multiline secret content. The first line is
+# the password and the remainder is a YAML-ish body (key-value pairs
+# plus the raw otpauth URL) that gopass parses for lookups like
+# `gopass otp` and gopassbridge's username/url matching.
+#
+# @param row [CSV::Row] A row from the Apple Passwords export.
+# @return [String] The full secret body, newline-terminated.
+def build_secret(row)
+  body  = secret_body(row)
+  lines = [row["Password"].to_s]
+
+  if body.present?
+    lines.push("", *body)
+  end
+
+  "#{lines.join("\n")}\n"
+end
+
+# Builds the gopass path for a row, preferring the URL hostname over the
+# title so gopassbridge's domain matching finds the entry. Falls back to
+# the sanitized title when no host is available, and to "unknown" /
+# "default" when both the name and username are blank.
+#
+# @param prefix [String] The top-level prefix, e.g. "apple".
+# @param title [#to_s] The Apple Passwords Title column.
+# @param url [#to_s] The Apple Passwords URL column.
+# @param username [#to_s] The Apple Passwords Username column.
+# @return [String] A gopass path of the form "prefix/name/user".
+def derive_path(prefix, title, url, username)
+  name = sanitize(hostname_from(url)) || sanitize(title) || "unknown"
+  user = sanitize(username) || "default"
+
+  "#{prefix.chomp("/")}/#{name}/#{user}"
+end
+
+# Extracts the hostname from a URL and strips a leading "www." so the
+# resulting segment matches what gopass-jsonapi sends to gopassbridge.
+# The bridge matches paths containing the hostname as a complete segment
+# and progressively strips subdomains until it hits a public suffix,
+# meaning entries stored under the base domain match all subdomains.
+#
+# @param url [#to_s] The URL to parse.
+# @return [String] The hostname without a "www." prefix, or "" when the
+#   URL has no host.
+def hostname_from(url)
+  host = URI.parse(url.to_s).host.to_s
+  host.sub(/\Awww\./, "")
+end
+
+# Pipes a secret body into `gopass insert --multiline` and returns the
+# process status along with any captured stderr so the caller can report
+# the underlying gopass error on failure.
+#
+# @param path [String] The gopass path to write to.
+# @param secret [String] The multiline secret content to write.
+# @param force [Boolean] When true, overwrite an existing entry.
+# @return [InsertResult] The exit status and captured stderr.
+def insert(path, secret, force:)
+  command = ["gopass", "insert", "--multiline"]
+
+  if force
+    command << "--force"
+  end
+
+  command << path
+
+  _, stderr, status = Open3.capture3(*command, stdin_data: secret)
+
+  InsertResult.new(status: status, stderr: stderr)
+end
+
+# Lowercases the value and collapses any run of characters that aren't
+# allowed in a gopass path segment into a single hyphen, then trims
+# leading and trailing hyphens.
+#
+# @param value [#to_s] The raw string to sanitize.
+# @return [String] A lowercase, hyphen-safe path segment.
+def sanitize(value)
+  value.to_s
+       .strip
+       .downcase
+       .gsub(/[^a-z0-9._-]+/, "-")
+       .gsub(/\A-+|-+\z/, "")
+       .presence
+end
+
+# Collects the lines that follow the password in a gopass secret body.
+# Each populated field in FIELDS contributes one or more lines—Notes
+# emits a leading blank line so multi-line notes stay visually separated
+# from the key-value metadata above them.
+#
+# @param row [CSV::Row] A row from the Apple Passwords export.
+# @return [Array<String>] The body lines, in order.
+def secret_body(row)
+  FIELDS.flat_map do |key, formatter|
+    value = row[key].to_s.strip
+
+    if value.present?
+      formatter.call(value).split("\n", -1)
+    else
+      []
+    end
+  end
+end
+
+options = {
+  dry_run: false,
+  force:   false,
+  prefix:  "apple"
+}
+
+OptionParser.new do |parser|
+  parser.banner = "Usage: lumen-gopass-import-apple [options] <csv>"
+
+  parser.on("--prefix PREFIX", "gopass path prefix (default: apple)") do |value|
+    options[:prefix] = value
+  end
+
+  parser.on("--force", "Overwrite existing entries instead of skipping them.") do
+    options[:force] = true
+  end
+
+  parser.on("--dry-run", "Print what would be imported without writing to gopass.") do
+    options[:dry_run] = true
+  end
+
+  parser.on("-h", "--help", "Show this help message.") do
+    puts parser
+    exit
+  end
+end.parse!
+
+path = ARGV.shift
+
+if path.nil?
+  abort "Error: CSV path required."
+end
+
+unless File.file?(path)
+  abort "Error: #{path} is not a file."
+end
+
+imported = skipped = failed = 0
+
+CSV.foreach(path, headers: true) do |row|
+  if row["Password"].to_s.empty?
+    skipped += 1
+    next
+  end
+
+  path   = derive_path(options[:prefix], row["Title"], row["URL"], row["Username"])
+  secret = build_secret(row)
+
+  if options[:dry_run]
+    puts "Would insert #{path}"
+    imported += 1
+    next
+  end
+
+  result = insert(path, secret, force: options[:force])
+
+  if result.status.success?
+    puts "Imported: #{path}"
+    imported += 1
+  else
+    reason = result.stderr.strip.gsub(/\s+/, " ")
+
+    warn "Failed:   #{path} (#{reason})"
+    failed += 1
+  end
+end
+
+warn "\nDone. (Imported: #{imported}, Skipped: #{skipped}, Failed: #{failed})"
+
+exit(failed.zero? ? 0 : 2)

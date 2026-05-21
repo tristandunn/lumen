@@ -1,0 +1,17 @@
+[core]
+	autosync = true
+	autopush = true
+	cliptimeout = 45
+	exportkeys = true
+
+[generate]
+	autoclip = true
+	length = 32
+	symbols = true
+
+[show]
+	autoclip = true
+	safecontent = false
+
+[updater]
+	check = false
