@@ -83,6 +83,7 @@ build_bwrap_args() {
 
   # Bind git configuration.
   args+=(--ro-bind-try "$HOME/.gitconfig" "$HOME/.gitconfig")
+  args+=(--ro-bind-try "$HOME/.config/git/ignore" "$HOME/.config/git/ignore")
   args+=(--ro-bind-try "$HOME/.config/git/local" "$HOME/.config/git/local")
 
   # Bind GitHub CLI credentials.
