@@ -89,6 +89,9 @@ build_bwrap_args() {
   # Bind GitHub CLI credentials.
   args+=(--ro-bind-try "$HOME/.config/gh" "$HOME/.config/gh")
 
+  # Bind the global mise configuration, which sets the active tool versions.
+  args+=(--ro-bind-try "$HOME/.config/mise" "$HOME/.config/mise")
+
   # Bind alias and zsh configuration.
   args+=(--ro-bind-try "$HOME/.aliases" "$HOME/.aliases")
   args+=(--ro-bind-try "$HOME/.zshrc" "$HOME/.zshrc")
@@ -151,6 +154,9 @@ build_bwrap_args() {
   # Bind mise runtime version manager directories.
   args+=(--setenv MISE_DATA_DIR "$MISE_DATA_DIR")
   args+=(--setenv MISE_CACHE_DIR "$MISE_CACHE_DIR")
+
+  # Trust the global configuration, since the trust state lives on the tmpfs.
+  args+=(--setenv MISE_TRUSTED_CONFIG_PATHS "$HOME/.config/mise/config.toml")
 
   if [[ -d "$MISE_CACHE_DIR" ]]; then
     args+=(--ro-bind "$MISE_CACHE_DIR" "$MISE_CACHE_DIR")
