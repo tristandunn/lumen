@@ -64,6 +64,5 @@
       "Working"
     ]
   },
-  "skipDangerousModePermissionPrompt": true,
-  "effortLevel": "high"
+  "skipDangerousModePermissionPrompt": true
 }
