@@ -12,6 +12,7 @@ fi
 # Install Steam with AMD graphics support and gaming tools.
 sudo pacman -S --needed --noconfirm \
   gamemode \
+  gamescope \
   lib32-gamemode \
   lib32-mangohud \
   lib32-mesa \

@@ -1,5 +1,6 @@
 link:
 	mkdir -p $(HOME)/.local/bin
+	ln -sfnv $(shell pwd)/cs2 $(HOME)/.local/bin/cs2
 	ln -sfnv $(shell pwd)/steam-run $(HOME)/.local/bin/steam-run
 
 packages:

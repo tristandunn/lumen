@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+# Counter-Strike 2 runs through XWayland, where the in-game pointer grab
+# bounces back and confines aim. gamescope's --force-grab-cursor is the only
+# thing that fixes the grab. Running gamescope on the scaled 5K desktop causes
+# soft upscaling, a tiny cursor, and wrong sensitivity, so first drop the panel
+# to its native 2560x1440 scale-1 mode: gamescope then renders 1:1 (sharp,
+# normal cursor and sensitivity, full FPS). The 5K desktop is restored on exit,
+# including crashes (trap).
+
+# Detect the connected monitor rather than hard-coding the connector name.
+MONITOR="$(hyprctl monitors | awk '/^Monitor/ { print $2; exit }')"
+
+# Raise back to the 5120x2880 scale-2 desktop on exit (quit, kill, or crash).
+restore() {
+  hyprctl keyword monitor "$MONITOR,5120x2880@60,0x0,2"
+}
+trap restore EXIT INT TERM HUP
+
+# Drop to the native 2560x1440 scale-1 mode so gamescope renders 1:1, and let
+# it settle before gamescope grabs the display.
+hyprctl keyword monitor "$MONITOR,2560x1440@60,0x0,1"
+sleep 1
+
+# Run the game (Steam's %command%) under gamescope with a forced cursor grab.
+gamescope -W 2560 -H 1440 -r 60 -f --force-grab-cursor -- "$@"
