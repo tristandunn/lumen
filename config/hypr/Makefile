@@ -2,14 +2,14 @@ install: packages link
 
 link:
 	mkdir -p $(HOME)/.config/hypr
-	ln -sfnv $(shell pwd)/appearance.conf $(HOME)/.config/hypr/appearance.conf
-	ln -sfnv $(shell pwd)/bindings.conf $(HOME)/.config/hypr/bindings.conf
-	ln -sfnv $(shell pwd)/environment.conf $(HOME)/.config/hypr/environment.conf
-	ln -sfnv $(shell pwd)/hyprland.conf $(HOME)/.config/hypr/hyprland.conf
-	ln -sfnv $(shell pwd)/input.conf $(HOME)/.config/hypr/input.conf
-	ln -sfnv $(shell pwd)/monitors.conf $(HOME)/.config/hypr/monitors.conf
-	ln -sfnv $(shell pwd)/startup.conf $(HOME)/.config/hypr/startup.conf
-	ln -sfnv $(shell pwd)/voxtype.conf $(HOME)/.config/hypr/voxtype.conf
+	ln -sfnv $(shell pwd)/appearance.lua $(HOME)/.config/hypr/appearance.lua
+	ln -sfnv $(shell pwd)/bindings.lua $(HOME)/.config/hypr/bindings.lua
+	ln -sfnv $(shell pwd)/environment.lua $(HOME)/.config/hypr/environment.lua
+	ln -sfnv $(shell pwd)/hyprland.lua $(HOME)/.config/hypr/hyprland.lua
+	ln -sfnv $(shell pwd)/input.lua $(HOME)/.config/hypr/input.lua
+	ln -sfnv $(shell pwd)/monitors.lua $(HOME)/.config/hypr/monitors.lua
+	ln -sfnv $(shell pwd)/startup.lua $(HOME)/.config/hypr/startup.lua
+	ln -sfnv $(shell pwd)/voxtype.lua $(HOME)/.config/hypr/voxtype.lua
 
 packages:
 	sudo pacman -S --needed --noconfirm hyprland xdg-desktop-portal-hyprland

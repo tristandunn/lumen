@@ -13,13 +13,13 @@ MONITOR="$(hyprctl monitors | awk '/^Monitor/ { print $2; exit }')"
 
 # Raise back to the 5120x2880 scale-2 desktop on exit (quit, kill, or crash).
 restore() {
-  hyprctl keyword monitor "$MONITOR,5120x2880@60,0x0,2"
+  hyprctl eval "hl.monitor({ output = \"$MONITOR\", mode = \"5120x2880@60\", position = \"0x0\", scale = 2 })"
 }
 trap restore EXIT INT TERM HUP
 
 # Drop to the native 2560x1440 scale-1 mode so gamescope renders 1:1, and let
 # it settle before gamescope grabs the display.
-hyprctl keyword monitor "$MONITOR,2560x1440@60,0x0,1"
+hyprctl eval "hl.monitor({ output = \"$MONITOR\", mode = \"2560x1440@60\", position = \"0x0\", scale = 1 })"
 sleep 1
 
 # Run the game (Steam's %command%) under gamescope with a forced cursor grab.

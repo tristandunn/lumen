@@ -37,21 +37,36 @@ if [[ -z "${shortcut}" ]]; then
 elif [[ "${shortcut}" == "noop" ]]; then
   exit 0
 elif [[ "${shortcut}" == "killactive" ]]; then
-  hyprctl dispatch killactive
+  hyprctl dispatch 'hl.dsp.window.close()'
 elif [[ "${shortcut}" == "toggle-float" ]]; then
   window_info=$(hyprctl activewindow -j)
   floating=$(echo "${window_info}" | jq -r '.floating')
   workspace=$(echo "${window_info}" | jq -r '.workspace.name')
+  monitor=$(echo "${window_info}" | jq -r '.monitor')
 
-  hyprctl dispatch togglefloating
-  hyprctl dispatch movetoworkspace "${workspace}"
+  hyprctl dispatch 'hl.dsp.window.float({ action = "toggle" })'
+  hyprctl dispatch "hl.dsp.window.move({ workspace = \"${workspace}\" })"
 
   if [[ "${floating}" == "false" ]]; then
-    hyprctl dispatch resizeactive exact 80% 80%
-    hyprctl dispatch centerwindow
+    # The Lua resize dispatcher takes pixels, not a percentage, so compute 80%
+    # of the monitor's logical resolution (physical size divided by its scale).
+    read -r width height < <(
+      hyprctl monitors -j |
+        jq -r --argjson m "${monitor}" \
+          '.[] | select(.id == $m) | "\((.width / .scale * 0.8) | floor) \((.height / .scale * 0.8) | floor)"'
+    )
+
+    hyprctl dispatch "hl.dsp.window.resize({ x = ${width}, y = ${height}, relative = false })"
+    hyprctl dispatch 'hl.dsp.window.center()'
   fi
-elif [[ -n "${param}" ]]; then
-  hyprctl dispatch sendshortcut "${shortcut}", "${param}", address:"${address}"
 else
-  hyprctl dispatch sendshortcut "${shortcut}", address:"${address}"
+  if [[ -n "${param}" ]]; then
+    mods="${shortcut}"
+    key="${param}"
+  else
+    mods="${shortcut%%,*}"
+    key="${shortcut#*,}"
+  fi
+
+  hyprctl dispatch "hl.dsp.send_shortcut({ mods = \"${mods}\", key = \"${key}\", window = \"address:${address}\" })"
 fi
