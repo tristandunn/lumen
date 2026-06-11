@@ -9,6 +9,7 @@ link:
 	ln -sfnv $(shell pwd)/commands/bump-it.md $(HOME)/.claude/commands/
 	ln -sfnv $(shell pwd)/scripts $(HOME)/.claude/scripts
 	ln -sfnv $(shell pwd)/sandbox $(HOME)/.local/bin/sandbox
+	ln -sfnv $(shell pwd)/scripts/claude-usage $(HOME)/.local/bin/claude-usage
 
 packages:
 	sudo pacman -S --needed --noconfirm bubblewrap python-libseccomp

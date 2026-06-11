@@ -4,7 +4,7 @@
   "height": 35,
 
   "modules-left": ["hyprland/workspaces"],
-  "modules-center": ["custom/voxtype"],
+  "modules-center": ["custom/voxtype", "custom/claude-usage"],
   "modules-right": ["custom/bluetooth-battery", "clock"],
 
   "clock": {
@@ -17,6 +17,14 @@
     "return-type": "json",
     "interval": 600,
     "on-click": "kitty bluetui",
+    "tooltip": true
+  },
+
+  "custom/claude-usage": {
+    "exec-if": "command -v claude-usage",
+    "exec": "claude-usage",
+    "return-type": "json",
+    "interval": 300,
     "tooltip": true
   },
 

@@ -1,0 +1,123 @@
+#!/usr/bin/env bash
+
+# Report usage for Claude Code as a Waybar JSON module, showing the remaining
+# percentage for the current session and week along with reset times.
+#
+# The API response is cached and only refreshed when Claude has been used since
+# the last fetch or a usage window has reset, so an idle bar makes no requests.
+
+set -euo pipefail
+
+readonly CREDENTIALS="$HOME/.claude/.credentials.json"
+readonly USAGE_URL="https://api.anthropic.com/api/oauth/usage"
+readonly CACHE="$HOME/.cache/claude-usage.json"
+readonly REFRESH_INTERVAL=300
+
+fail() {
+  local tooltip="$1"
+
+  jq -nc --arg text "Error" --arg tooltip "$tooltip" \
+    '{text: $text, tooltip: $tooltip}'
+  exit 1
+}
+
+# Decide whether the cache is stale enough to warrant a new request.
+needs_refresh() {
+  # Refresh if the cache is missing, empty, or not valid JSON.
+  if ! jq -e . "$CACHE" >/dev/null 2>&1; then
+    return 0
+  fi
+
+  # Refresh once a usage window has reset, since the remaining percentage jumps.
+  local earliest_reset
+  earliest_reset=$(jq -r '[.five_hour.resets_at, .seven_day.resets_at]
+    | map(select(. != null)) | min // empty' "$CACHE")
+  if [[ -n "$earliest_reset" ]] && [[ $(date +%s) -ge $(date -d "$earliest_reset" +%s) ]]; then
+    return 0
+  fi
+
+  # Throttle requests to at most one per refresh interval while active.
+  if [[ $(( $(date +%s) - $(stat -c %Y "$CACHE") )) -lt $REFRESH_INTERVAL ]]; then
+    return 1
+  fi
+
+  # Refresh if Claude has been used since the cache was written, in either the
+  # main config directory or any sandbox.
+  local history
+  for history in "$HOME"/.claude/history.jsonl "$HOME"/.claude/sandbox/*/history.jsonl; do
+    if [[ "$history" -nt "$CACHE" ]]; then
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+# Fetch the latest usage and write it to the cache, or fail with a message.
+refresh_cache() {
+  if [[ ! -f "$CREDENTIALS" ]]; then
+    fail "The credentials file was not found at ~/.claude/.credentials.json."
+  fi
+
+  local token
+  token=$(jq -r '.claudeAiOauth.accessToken // empty' "$CREDENTIALS" 2>/dev/null)
+
+  if [[ -z "$token" ]]; then
+    fail "Could not read the access token from the credentials file."
+  fi
+
+  local usage
+  if ! usage=$(curl -sf \
+    -H "Authorization: Bearer $token" \
+    -H "anthropic-beta: oauth-2025-04-20" \
+    -H "User-Agent: claude-code/2.0.32" \
+    "$USAGE_URL"); then
+    fail "Could not reach api.anthropic.com. The token may have expired, so open a Claude session to refresh it."
+  fi
+
+  if [[ -z "$usage" ]] || echo "$usage" | jq -e '.error' >/dev/null 2>&1; then
+    fail "The usage endpoint returned an unexpected response."
+  fi
+
+  mkdir -p "$(dirname "$CACHE")"
+  printf '%s' "$usage" > "$CACHE"
+}
+
+# Render the cached usage as the Waybar JSON module.
+render() {
+  local usage
+  usage=$(cat "$CACHE")
+
+  local session_percent weekly_percent session_reset weekly_reset
+  session_percent=$(echo "$usage" | jq -r '.five_hour.utilization // 0 | floor')
+  weekly_percent=$(echo "$usage" | jq -r '.seven_day.utilization // 0 | floor')
+  session_reset=$(echo "$usage" | jq -r '.five_hour.resets_at // ""')
+  weekly_reset=$(echo "$usage" | jq -r '.seven_day.resets_at // ""')
+
+  local session_remaining weekly_remaining
+  session_remaining=$(( 100 - session_percent ))
+  weekly_remaining=$(( 100 - weekly_percent ))
+
+  local text
+  text="${session_remaining}% / ${weekly_remaining}%"
+
+  local session_reset_formatted weekly_reset_formatted
+  session_reset_formatted=$(date -d "$session_reset" '+%l:%M %p' 2>/dev/null || echo "$session_reset")
+  weekly_reset_formatted=$(date -d "$weekly_reset" '+%l:%M %p on %A' 2>/dev/null || echo "$weekly_reset")
+
+  local tooltip
+  tooltip="Session at ${session_reset_formatted}.
+Overall at ${weekly_reset_formatted}."
+
+  jq -nc --arg text "$text" --arg tooltip "$tooltip" '{text: $text, tooltip: $tooltip}'
+}
+
+main() {
+  if needs_refresh; then
+    refresh_cache
+  fi
+
+  render
+}
+
+main
