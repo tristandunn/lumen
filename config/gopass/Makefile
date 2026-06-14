@@ -1,4 +1,4 @@
-install: packages packages-aur link
+install: packages link
 
 link:
 	mkdir -p $(HOME)/.config/gopass $(HOME)/.local/bin
@@ -6,7 +6,6 @@ link:
 	ln -sfnv $(shell pwd)/lumen-gopass-import-apple $(HOME)/.local/bin/lumen-gopass-import-apple
 
 packages:
-	sudo pacman -S --needed --noconfirm git gnupg gopass rng-tools
-	yay -S --needed --noconfirm gopass-jsonapi
+	sudo pacman -S --needed --noconfirm git gnupg gopass gopass-jsonapi rng-tools
 
 .PHONY: install link packages

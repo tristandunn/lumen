@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+readonly VERSION="v2.0.1"
+readonly ARCHIVE="macOS.tar.xz"
+readonly CHECKSUM="9c6e5e13b068ce51a9e90a9abd6ce232ec7d25d4ceb05aa8ac76efbb99c76762"
+readonly URL="https://github.com/ful1e5/apple_cursor/releases/download/${VERSION}/${ARCHIVE}"
+readonly ICONS_DIRECTORY="${XDG_DATA_HOME:-${HOME}/.local/share}/icons"
+
+readonly TEMPORARY_DIRECTORY="$(mktemp --directory)"
+trap 'rm --recursive --force "${TEMPORARY_DIRECTORY}"' EXIT
+
+main() {
+  local archive_path="${TEMPORARY_DIRECTORY}/${ARCHIVE}"
+
+  echo "Downloading apple_cursor ${VERSION}..."
+  curl --silent --show-error --location --output "${archive_path}" "${URL}"
+
+  echo "Verifying checksum..."
+  if ! echo "${CHECKSUM}  ${archive_path}" | sha256sum --check --status; then
+    echo "Checksum verification failed for ${ARCHIVE}." >&2
+    exit 1
+  fi
+
+  echo "Installing the macOS cursor theme into ${ICONS_DIRECTORY}..."
+  mkdir --parents "${ICONS_DIRECTORY}"
+  rm --recursive --force "${ICONS_DIRECTORY}/macOS"
+  tar --extract --xz --file "${archive_path}" --directory "${ICONS_DIRECTORY}" ./macOS
+}
+
+main

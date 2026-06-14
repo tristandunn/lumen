@@ -1,4 +1,4 @@
-install: packages packages-aur packages-npm packages-gem link
+install: packages packages-npm packages-gem link
 
 link:
 	mkdir -p $(HOME)/.config/nvim/lua
@@ -11,28 +11,22 @@ link:
 
 packages:
 	sudo pacman -S --needed --noconfirm \
+		dockerfile-language-server \
+		eslint-language-server \
 		lua-language-server \
 		neovim \
 		tailwindcss-language-server \
+		vscode-json-languageserver \
 		yaml-language-server
-
-# Note: The stylelint-lsp package requires a PGP key not on keyservers.
-#
-#   curl -s https://github.com/bmatcuk.gpg | gpg --import
-#
-packages-aur:
-	yay -S --needed --noconfirm \
-		dockerfile-language-server \
-		stylelint-lsp \
-		vscode-langservers-extracted
 
 packages-npm:
 	@npm list -g @herb-tools/language-server >/dev/null 2>&1 || npm install -g @herb-tools/language-server
 	@npm list -g @herb-tools/linter >/dev/null 2>&1 || npm install -g @herb-tools/linter
+	@npm list -g stylelint-lsp >/dev/null 2>&1 || npm install -g stylelint-lsp
 
 packages-gem:
 	@gem list -i ruby-lsp >/dev/null 2>&1 || gem install ruby-lsp
 	@gem list -i ruby-lsp-rails >/dev/null 2>&1 || gem install ruby-lsp-rails
 	@gem list -i ruby-lsp-rspec >/dev/null 2>&1 || gem install ruby-lsp-rspec
 
-.PHONY: install link packages packages-aur packages-npm packages-gem
+.PHONY: install link packages packages-npm packages-gem
