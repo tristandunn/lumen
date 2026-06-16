@@ -3,7 +3,6 @@
 set -euo pipefail
 
 declare -A SHORTCUTS=(
-  [cs2:tab-close]="noop"
   [default:copy]="SHIFT+CONTROL,C"
   [default:paste]="SHIFT+CONTROL,V"
   [default:save]="CONTROL,S"
@@ -18,6 +17,7 @@ declare -A SHORTCUTS=(
   [firefox:tab-new]="CONTROL,T"
   [firefox:tab-next]="CONTROL,Next"
   [firefox:tab-previous]="CONTROL,Prior"
+  [gamescope:tab-close]="noop"
   [kitty:tab-close]="SHIFT+CONTROL,W"
   [kitty:tab-goto-number]="CONTROL+ALT"
   [kitty:tab-new]="SHIFT+CONTROL,T"
