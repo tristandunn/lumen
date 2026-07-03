@@ -6,7 +6,11 @@
 
 set -euo pipefail
 
-file_path=$(jq -r '.tool_input.file_path')
+file_path=$(jq -r '.tool_input.file_path' 2>/dev/null) || exit 0
+
+if [[ -z "$file_path" || "$file_path" == "null" ]]; then
+  exit 0
+fi
 
 case "$file_path" in
   *.css)
@@ -16,17 +20,17 @@ case "$file_path" in
     ;;
   *.html.erb)
     if command -v yarn &>/dev/null && jq -e '.scripts["fix:erb"]' package.json &>/dev/null; then
-      yarn fix:erb "$file_path" 2>&1 || true
+      yarn fix:erb 2>&1 || true
     fi
     ;;
   *.js)
-    if command -v yarn &>/dev/null && jq -e '.scripts["lint"]' package.json &>/dev/null; then
-      yarn lint --fix "$file_path" 2>&1 || true
+    if command -v yarn &>/dev/null && jq -e '.scripts["fix:js"]' package.json &>/dev/null; then
+      yarn fix:js 2>&1 || true
     fi
     ;;
   *.rb|*Rakefile|*Gemfile)
     if command -v rubocop &>/dev/null; then
-      rubocop -A "$file_path" 2>&1 || true
+      rubocop -A -- "$file_path" 2>&1 || true
     fi
     ;;
 esac
