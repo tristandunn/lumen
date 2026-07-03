@@ -64,5 +64,7 @@
       "Working"
     ]
   },
-  "skipDangerousModePermissionPrompt": true
+  "tui": "fullscreen",
+  "skipDangerousModePermissionPrompt": true,
+  "cleanupPeriodDays": 1095
 }
