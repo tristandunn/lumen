@@ -1,0 +1,132 @@
+#!/usr/bin/env bash
+
+#
+# Aggregate Claude Code usage across the global directory and all sandbox
+# project directories, reporting cost totals per period.
+#
+# Usage:
+#   sandbox-usage daily
+#   sandbox-usage weekly
+#   sandbox-usage monthly
+#
+
+set -euo pipefail
+
+readonly CLAUDE_DIR="$HOME/.claude"
+readonly SANDBOX_DIR="$CLAUDE_DIR/sandbox"
+
+work_dir=""
+
+log() {
+  printf '\r\033[K%s' "$*" >&2
+}
+
+cleanup() {
+  [[ -n "$work_dir" ]] && rm -rf "$work_dir"
+}
+
+# Terminate any in-flight query jobs, clean up, and abort on interrupt.
+abort() {
+  local pid
+  for pid in $(jobs -p); do
+    kill "$pid" 2>/dev/null || true
+  done
+  cleanup
+  exit 130
+}
+
+query_source() {
+  local dir="$1"
+  local period="$2"
+  shift 2
+
+  env CLAUDE_CONFIG_DIR="$dir" npx ccusage "$period" --json --offline "$@" 2>/dev/null || true
+}
+
+main() {
+  local period="${1:-daily}"
+  shift || true
+
+  case "$period" in
+    daily|weekly|monthly) ;;
+    *)
+      echo "Usage: sandbox-usage [daily|weekly|monthly]" >&2
+      return 1
+      ;;
+  esac
+
+  local -a dirs=("$CLAUDE_DIR")
+
+  if [[ -d "$SANDBOX_DIR" ]]; then
+    for project_dir in "$SANDBOX_DIR"/*/; do
+      [[ -d "$project_dir/projects" ]] && dirs+=("$project_dir")
+    done
+  fi
+
+  local total=${#dirs[@]}
+
+  work_dir=$(mktemp -d)
+  trap cleanup EXIT
+  trap abort INT TERM
+
+  log "Collecting usage from $total sources..."
+
+  # Cap concurrency at the CPU count so a large number of sandboxes does not
+  # spawn an unbounded pile of node processes at once.
+  local max_jobs
+  max_jobs=$(nproc 2>/dev/null || echo 4)
+
+  local launched=0
+  local completed=0
+  local i
+
+  for i in "${!dirs[@]}"; do
+    while (( launched - completed >= max_jobs )); do
+      wait -n 2>/dev/null || true
+      completed=$((completed + 1))
+      log "Collecting usage from $total sources... ($completed/$total)"
+    done
+
+    (query_source "${dirs[$i]}" "$period" "$@" > "$work_dir/$i") &
+    launched=$((launched + 1))
+  done
+
+  # Drain the remaining jobs, counting by actual completion order.
+  while (( completed < total )); do
+    wait -n 2>/dev/null || true
+    completed=$((completed + 1))
+    log "Collecting usage from $total sources... ($completed/$total)"
+  done
+
+  # Clear the progress line before printing results or warnings.
+  printf '\r\033[K' >&2
+
+  local -a valid=()
+  local file index
+
+  for file in "$work_dir"/*; do
+    if [[ -s "$file" ]] && jq -e ".${period}" "$file" >/dev/null 2>&1; then
+      valid+=("$file")
+    else
+      index=$(basename "$file")
+      echo "Warning: no usage data collected from ${dirs[$index]}" >&2
+    fi
+  done
+
+  if [[ ${#valid[@]} -eq 0 ]]; then
+    echo "No usage data was collected from any source." >&2
+    return 1
+  fi
+
+  jq -s --arg key "$period" '
+    map(.[$key] // []) | flatten |
+    group_by(.period) |
+    map({period: .[0].period, cost: (map(.totalCost // 0) | add)}) |
+    sort_by(.period) |
+    .[] |
+    .cost = (.cost * 100 | round / 100 | tostring | if test("\\.") then . else . + ".00" end | if test("\\.[0-9]$") then . + "0" else . end) |
+    "\(.period)  $\(.cost)"
+  ' -r "${valid[@]}"
+}
+
+main "$@"
