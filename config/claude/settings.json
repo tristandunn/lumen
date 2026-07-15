@@ -37,9 +37,7 @@
       "Edit(**/config/master.key)",
       "Edit(**/.env*)",
       "Read(**/config/master.key)",
-      "Read(**/.env*)",
-      "Write(**/config/master.key)",
-      "Write(**/.env*)"
+      "Read(**/.env*)"
     ]
   },
   "hooks": {
