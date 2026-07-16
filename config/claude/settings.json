@@ -63,7 +63,8 @@
       "Working"
     ]
   },
+  "awaySummaryEnabled": false,
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
-  "awaySummaryEnabled": false
+  "remoteControlAtStartup": false
 }
