@@ -5,6 +5,7 @@ link:
 	ln -sfnv $(shell pwd)/lumen-audio-sink $(HOME)/.local/bin/lumen-audio-sink
 	ln -sfnv $(shell pwd)/lumen-audio-switch $(HOME)/.local/bin/lumen-audio-switch
 	ln -sfnv $(shell pwd)/lumen-bluetooth-battery $(HOME)/.local/bin/lumen-bluetooth-battery
+	ln -sfnv $(shell pwd)/lumen-bluetooth-headphones $(HOME)/.local/bin/lumen-bluetooth-headphones
 	ln -sfnv $(shell pwd)/lumen-bluetooth-reconnect $(HOME)/.local/bin/lumen-bluetooth-reconnect
 	ln -sfnv $(shell pwd)/lumen-brightness-control $(HOME)/.local/bin/lumen-brightness-control
 	ln -sfnv $(shell pwd)/lumen-caffeinate $(HOME)/.local/bin/lumen-caffeinate

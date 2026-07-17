@@ -1,0 +1,72 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# The Advanced Audio Distribution Profile (A2DP) Sink UUID identifies devices
+# that support high-quality stereo audio, such as headphones and speakers.
+a2dp_sink_uuid="0000110b-0000-1000-8000-00805f9b34fb"
+connect_delay=4
+disconnect_delay=2
+maximum_attempts=3
+
+# Use the given addresses, or discover every paired device that supports A2DP so
+# the keyboard and mouse are left alone.
+if [[ "$#" -gt 0 ]]; then
+  addresses=("$@")
+else
+  addresses=()
+  for address in $(bluetoothctl devices Paired | awk '{print $2}'); do
+    if bluetoothctl info "${address}" | grep -qi "${a2dp_sink_uuid}"; then
+      addresses+=("${address}")
+    fi
+  done
+fi
+
+if [[ "${#addresses[@]}" -eq 0 ]]; then
+  echo "No paired A2DP audio devices found." >&2
+  exit 1
+fi
+
+status=0
+
+for address in "${addresses[@]}"; do
+  card="bluez_card.${address//:/_}"
+  name=$(bluetoothctl info "${address}" | awk -F': ' '/Name:/ {print $2; exit}')
+  name="${name:-${address}}"
+
+  # Reconnect until the card reports an A2DP profile, working around BlueZ
+  # leaving the device on telephone-quality HSP/HFP (bluez/bluez issue #1266).
+  attempt=0
+  while true; do
+    profile=$(pactl list cards | sed -n "/Name: ${card}\$/,/Active Profile:/p" \
+      | awk '/Active Profile:/ {print $3}')
+
+    if [[ "${profile}" == a2dp-sink* ]]; then
+      break
+    fi
+
+    attempt=$((attempt + 1))
+    if [[ "${attempt}" -gt "${maximum_attempts}" ]]; then
+      break
+    fi
+
+    echo "Reconnecting ${name} (attempt ${attempt} of ${maximum_attempts})..."
+
+    if bluetoothctl info "${address}" | grep -q "Connected: yes"; then
+      bluetoothctl disconnect "${address}" &>/dev/null || true
+      sleep "${disconnect_delay}"
+    fi
+
+    bluetoothctl connect "${address}" &>/dev/null || true
+    sleep "${connect_delay}"
+  done
+
+  if [[ "${profile}" == a2dp-sink* ]]; then
+    echo "${name} is connected on high-quality A2DP."
+  else
+    echo "${name} did not reach A2DP after ${maximum_attempts} attempts." >&2
+    status=1
+  fi
+done
+
+exit "${status}"
