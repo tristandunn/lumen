@@ -1,0 +1,9 @@
+[Unit]
+Description=SwayOSD server
+Documentation=https://github.com/ErikReider/SwayOSD
+StartLimitIntervalSec=0
+
+[Service]
+ExecStart=/usr/bin/swayosd-server
+Restart=on-failure
+RestartSec=2
