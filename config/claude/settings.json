@@ -33,6 +33,15 @@
       "Bash(wc:*)",
       "Bash(yarn install:*)"
     ],
+    "ask": [
+      "Bash(./bin/kamal:*)",
+      "Bash(./bin/terraform:*)",
+      "Bash(bin/kamal:*)",
+      "Bash(bin/terraform:*)",
+      "Bash(bundle exec kamal:*)",
+      "Bash(kamal:*)",
+      "Bash(terraform:*)"
+    ],
     "deny": [
       "Edit(**/config/master.key)",
       "Edit(**/.env*)",
