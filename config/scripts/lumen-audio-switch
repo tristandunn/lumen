@@ -2,12 +2,13 @@
 
 set -euo pipefail
 
-# Exclude PCI controllers and sinks with all ports unavailable.
+# Exclude PCI controllers and sinks with all ports unavailable, and collapse
+# duplicates so each device appears once in the cycle.
 available_sinks=$(
   pactl -f json list sinks | jq -r '
     [.[] | select(.name | test("^alsa_output\\.pci") | not)
           | select(.ports == [] or (.ports | any(.availability != "not available")))]
-    | .[].name
+    | unique_by(.name) | .[].name
   '
 )
 
