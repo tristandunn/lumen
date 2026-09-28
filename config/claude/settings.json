@@ -33,6 +33,12 @@
       "Bash(wc:*)",
       "Bash(yarn install:*)"
     ],
+    "deny": [
+      "Edit(**/config/master.key)",
+      "Edit(**/.env*)",
+      "Read(**/config/master.key)",
+      "Read(**/.env*)"
+    ],
     "ask": [
       "Bash(./bin/kamal:*)",
       "Bash(./bin/terraform:*)",
@@ -41,12 +47,6 @@
       "Bash(bundle exec kamal:*)",
       "Bash(kamal:*)",
       "Bash(terraform:*)"
-    ],
-    "deny": [
-      "Edit(**/config/master.key)",
-      "Edit(**/.env*)",
-      "Read(**/config/master.key)",
-      "Read(**/.env*)"
     ]
   },
   "hooks": {
@@ -75,5 +75,7 @@
   "awaySummaryEnabled": false,
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
-  "remoteControlAtStartup": false
+  "editorMode": "vim",
+  "remoteControlAtStartup": false,
+  "model": "sonnet"
 }
