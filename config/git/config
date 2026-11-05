@@ -18,7 +18,7 @@
 [core]
   attributesfile = ~/.config/git/attributes
   excludesfile = ~/.config/git/ignore
-  pager = less -r
+	pager = less -R
 [diff]
   algorithm = histogram
   mnemonicPrefix = true
