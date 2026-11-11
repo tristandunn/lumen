@@ -49,6 +49,7 @@
       "Bash(terraform:*)"
     ]
   },
+  "model": "sonnet",
   "hooks": {
     "PostToolUse": [
       {
@@ -72,10 +73,10 @@
       "Working"
     ]
   },
+  "effortLevel": "medium",
   "awaySummaryEnabled": false,
   "tui": "fullscreen",
   "skipDangerousModePermissionPrompt": true,
   "editorMode": "vim",
-  "remoteControlAtStartup": false,
-  "model": "sonnet"
+  "remoteControlAtStartup": false
 }
