@@ -1,4 +1,5 @@
 ---
+model: haiku
 allowed-tools:
   - Bash(git diff --staged)
   - Bash(git status)
