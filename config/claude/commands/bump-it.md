@@ -1,4 +1,5 @@
 ---
+model: haiku
 allowed-tools:
   - Bash(git checkout -b td-dependencies)
   - Bash(git branch --list td-dependencies)
