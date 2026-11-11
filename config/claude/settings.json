@@ -64,6 +64,8 @@
     ]
   },
   "enabledPlugins": {
+    "cc-plugin-telemetry@builtin": false,
+    "cc-plugin-diff@builtin": false,
     "ruby-lsp@claude-plugins-official": true
   },
   "spinnerTipsEnabled": false,
