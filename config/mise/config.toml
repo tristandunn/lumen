@@ -1,6 +1,3 @@
-[settings.node]
-corepack = true
-
 [settings.ruby]
 compile = false
 
