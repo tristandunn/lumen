@@ -1,17 +1,10 @@
 #!/usr/bin/env bash
 
-# Use open-source RADV Vulkan driver instead of proprietary AMDVLK.
-export AMD_VULKAN_ICD=RADV
-
 # Disable DXVK debug logging for slightly less overhead.
 export DXVK_LOG_LEVEL=none
 
-# Persist shader caches across game reinstalls.
-export DXVK_STATE_CACHE_PATH="$HOME/.cache/dxvk"
+# Persist the VKD3D shader cache across game reinstalls.
 export VKD3D_SHADER_CACHE_PATH="$HOME/.cache/vkd3d"
-
-# Pre-load shared libraries to reduce micro-stutter.
-export LD_BIND_NOW=1
 
 # Toggle FPS, CPU/GPU usage, and temperature overlay with F12.
 export MANGOHUD=1
@@ -20,13 +13,10 @@ export MANGOHUD_CONFIG="no_display,toggle_hud=F12"
 # Force SDL games, such as CS2, to use PipeWire for audio.
 export SDL_AUDIODRIVER=pipewire
 
-# Optimize CPU governor, I/O priority, and GPU performance while gaming.
-export STEAM_USE_GAMEMODE=1
-
 # Disable VKD3D debug logging for DX12 games.
 export VKD3D_DEBUG=none
 
-# Enable FSR upscaling when games run below native resolution in fullscreen.
+# Enable FSR upscaling below native resolution in fullscreen, for GE-Proton.
 export WINE_FULLSCREEN_FSR=1
 export WINE_FULLSCREEN_FSR_STRENGTH=2
 
